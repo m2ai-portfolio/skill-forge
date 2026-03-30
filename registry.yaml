@@ -1,0 +1,120 @@
+# Skill Forge Registry Index
+# Auto-generated aggregation of all skill-registry.yaml files
+# Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
+# Regenerate: python src/build_registry.py
+
+generated_at: "2026-03-30"
+total_skills: 18
+by_status:
+  active: 14
+  draft: 4
+
+skills:
+  - name: agent-cost-model
+    version: "1.0.0"
+    status: active
+    domain: agent-architecture
+    health_score: null
+
+  - name: agent-readiness-audit
+    version: "1.0.0"
+    status: active
+    domain: code-quality
+    health_score: null
+
+  - name: agents-md-generator
+    version: "1.0.0"
+    status: active
+    domain: developer-tooling
+    health_score: null
+
+  - name: classify-agent
+    version: "1.0.0"
+    status: active
+    domain: agent-architecture
+    health_score: null
+
+  - name: claude-architect-audit
+    version: "1.0.0"
+    status: active
+    domain: developer-tooling
+    health_score: null
+
+  - name: context-fork-guide
+    version: "1.0.0"
+    status: active
+    domain: context-management
+    health_score: null
+
+  - name: context-hygiene
+    version: "1.0.0"
+    status: active
+    domain: context-management
+    health_score: null
+
+  - name: counterargument-stress-test
+    version: "1.0.0"
+    status: draft
+    domain: strategic-analysis
+    health_score: null
+
+  - name: decomposition-scorer
+    version: "1.0.0"
+    status: active
+    domain: agent-architecture
+    health_score: null
+
+  - name: executive-briefing
+    version: "1.0.0"
+    status: draft
+    domain: strategic-analysis
+    health_score: null
+
+  - name: failure-postmortem
+    version: "1.0.0"
+    status: active
+    domain: code-quality
+    health_score: null
+
+  - name: geopolitical-signal-enricher
+    version: "1.0.0"
+    status: draft
+    domain: strategic-analysis
+    health_score: null
+
+  - name: mismatch-check
+    version: "1.0.0"
+    status: active
+    domain: agent-architecture
+    health_score: null
+
+  - name: nemoclaw-policy-gen
+    version: "1.0.0"
+    status: active
+    domain: security
+    health_score: null
+
+  - name: remote-channels
+    version: "1.0.0"
+    status: active
+    domain: deployment
+    health_score: null
+
+  - name: spec-gap-detector
+    version: "1.0.0"
+    status: active
+    domain: code-quality
+    health_score: null
+
+  - name: video-to-skill
+    version: "1.0.0"
+    status: active
+    domain: content-creation
+    health_score: null
+
+  - name: viral-shorts-pipeline
+    version: "0.1.0"
+    status: draft
+    domain: content-creation
+    health_score: null
+
