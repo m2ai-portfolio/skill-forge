@@ -19,7 +19,7 @@ metrics:
   invocations_30d: 0
   last_invoked: null
   manual_rating: null
-  health_score: null
+  health_score: 18.0
 
 learning:
   total_patches_applied: 0
