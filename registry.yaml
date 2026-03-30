@@ -14,107 +14,107 @@ skills:
     version: "1.0.0"
     status: active
     domain: agent-architecture
-    health_score: null
+    health_score: 49.0
 
   - name: agent-readiness-audit
     version: "1.0.0"
     status: active
     domain: code-quality
-    health_score: null
+    health_score: 18.3
 
   - name: agents-md-generator
     version: "1.0.0"
     status: active
     domain: developer-tooling
-    health_score: null
+    health_score: 18.3
 
   - name: classify-agent
     version: "1.0.0"
     status: active
     domain: agent-architecture
-    health_score: null
+    health_score: 18.7
 
   - name: claude-architect-audit
     version: "1.0.0"
     status: active
     domain: developer-tooling
-    health_score: null
+    health_score: 17.7
 
   - name: context-fork-guide
     version: "1.0.0"
     status: active
     domain: context-management
-    health_score: null
+    health_score: 47.0
 
   - name: context-hygiene
     version: "1.0.0"
     status: active
     domain: context-management
-    health_score: null
+    health_score: 47.0
 
   - name: counterargument-stress-test
     version: "1.0.0"
     status: active
     domain: strategic-analysis
-    health_score: null
+    health_score: 50.0
 
   - name: decomposition-scorer
     version: "1.0.0"
     status: active
     domain: agent-architecture
-    health_score: null
+    health_score: 18.7
 
   - name: executive-briefing
     version: "1.0.0"
     status: active
     domain: strategic-analysis
-    health_score: null
+    health_score: 50.0
 
   - name: failure-postmortem
     version: "1.0.0"
     status: active
     domain: code-quality
-    health_score: null
+    health_score: 49.0
 
   - name: geopolitical-signal-enricher
     version: "1.0.0"
     status: active
     domain: strategic-analysis
-    health_score: null
+    health_score: 50.0
 
   - name: mismatch-check
     version: "1.0.0"
     status: active
     domain: agent-architecture
-    health_score: null
+    health_score: 18.7
 
   - name: nemoclaw-policy-gen
     version: "1.0.0"
     status: active
     domain: security
-    health_score: null
+    health_score: 18.3
 
   - name: remote-channels
     version: "1.0.0"
     status: active
     domain: deployment
-    health_score: null
+    health_score: 17.3
 
   - name: spec-gap-detector
     version: "1.0.0"
     status: active
     domain: code-quality
-    health_score: null
+    health_score: 49.0
 
   - name: video-to-skill
     version: "1.0.0"
     status: active
     domain: content-creation
-    health_score: null
+    health_score: 18.0
 
   - name: viral-shorts-pipeline
     version: "0.1.0"
     status: draft
     domain: content-creation
-    health_score: null
+    health_score: 19.0
 
