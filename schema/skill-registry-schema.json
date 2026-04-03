@@ -112,6 +112,12 @@
           "description": "Composite health score from 0-100",
           "minimum": 0,
           "maximum": 100
+        },
+        "ego_quality_score": {
+          "type": ["number", "null"],
+          "description": "LLM-evaluated quality score from Ego judge (0-100)",
+          "minimum": 0,
+          "maximum": 100
         }
       },
       "additionalProperties": false

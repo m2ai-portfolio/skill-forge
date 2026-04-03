@@ -2,12 +2,23 @@
 """Compute health scores for all registered skills and update registry files.
 
 Scoring formula (0-100):
+  When ego_quality_score IS present:
+  - Ego quality:        35% — LLM-evaluated quality from ego_evaluator.py
+  - Invocations (30d):  25% — normalized against the most-used skill
+  - Staleness:          15% — days since created, decays over 60d
+  - Deployed:           15% — sync_hash present = deployed to ~/.claude/skills/
+  - Manual rating:      10% — from skill-registry.yaml (0-10 scaled to 0-100)
+
+  When ego_quality_score is null but manual_rating IS present:
   - Invocations (30d):  40% — normalized against the most-used skill
-  - Staleness:          20% — days since created, decays over 30d
+  - Staleness:          20% — days since created, decays over 60d
   - Deployed:           20% — sync_hash present = deployed to ~/.claude/skills/
   - Manual rating:      20% — from skill-registry.yaml (0-10 scaled to 0-100)
 
-When manual_rating is null, its weight redistributes to invocations (50/20/30/0).
+  When both ego_quality_score and manual_rating are null:
+  - Invocations (30d):  50% — normalized against the most-used skill
+  - Staleness:          20% — days since created, decays over 60d
+  - Deployed:           30% — sync_hash present = deployed to ~/.claude/skills/
 
 Usage:
     python src/scorecard.py              # Score all skills, print report
@@ -23,7 +34,24 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 DB_PATH = REPO_ROOT / "data" / "skill_invocations.db"
 
+WEIGHTS_WITH_EGO_AND_RATING = {
+    "ego_quality": 0.35,
+    "invocations": 0.25,
+    "staleness": 0.15,
+    "deployed": 0.15,
+    "manual_rating": 0.10,
+}
+
+WEIGHTS_WITH_EGO_NO_RATING = {
+    "ego_quality": 0.40,
+    "invocations": 0.30,
+    "staleness": 0.15,
+    "deployed": 0.15,
+    "manual_rating": 0.00,
+}
+
 WEIGHTS_WITH_RATING = {
+    "ego_quality": 0.00,
     "invocations": 0.40,
     "staleness": 0.20,
     "deployed": 0.20,
@@ -31,6 +59,7 @@ WEIGHTS_WITH_RATING = {
 }
 
 WEIGHTS_NO_RATING = {
+    "ego_quality": 0.00,
     "invocations": 0.50,
     "staleness": 0.20,
     "deployed": 0.30,
@@ -55,7 +84,8 @@ def get_invocation_counts(days: int = 30) -> dict[str, int]:
 
 def parse_registry(path: Path) -> dict:
     """Parse key fields from a skill-registry.yaml without PyYAML."""
-    data = {"name": None, "status": None, "created": None, "sync_hash": None, "manual_rating": None}
+    data = {"name": None, "status": None, "created": None, "sync_hash": None,
+            "manual_rating": None, "ego_quality_score": None}
     in_metrics = False
     for line in path.read_text().splitlines():
         stripped = line.strip()
@@ -73,7 +103,9 @@ def parse_registry(path: Path) -> dict:
         elif in_metrics and stripped.startswith("manual_rating:"):
             val = stripped.split(":", 1)[1].strip()
             data["manual_rating"] = None if val == "null" else float(val)
-            in_metrics = False
+        elif in_metrics and stripped.startswith("ego_quality_score:"):
+            val = stripped.split(":", 1)[1].strip()
+            data["ego_quality_score"] = None if val == "null" else float(val)
         elif in_metrics and not stripped.startswith(("invocations_30d:", "last_invoked:", "health_score:")):
             if ":" in stripped and not stripped.startswith("#"):
                 in_metrics = False
@@ -105,7 +137,19 @@ def compute_scores(threshold: int = 0) -> list[dict]:
             continue
 
         has_rating = reg["manual_rating"] is not None
-        weights = WEIGHTS_WITH_RATING if has_rating else WEIGHTS_NO_RATING
+        has_ego = reg["ego_quality_score"] is not None
+
+        if has_ego and has_rating:
+            weights = WEIGHTS_WITH_EGO_AND_RATING
+        elif has_ego:
+            weights = WEIGHTS_WITH_EGO_NO_RATING
+        elif has_rating:
+            weights = WEIGHTS_WITH_RATING
+        else:
+            weights = WEIGHTS_NO_RATING
+
+        # Ego quality score: already 0-100 from ego_evaluator
+        ego_score = reg["ego_quality_score"] if has_ego else 0
 
         # Invocation score (0-100): normalized against max
         inv_count = invocations.get(reg["name"], 0)
@@ -126,6 +170,7 @@ def compute_scores(threshold: int = 0) -> list[dict]:
         rating_score = (reg["manual_rating"] / 10) * 100 if has_rating else 0
 
         components = {
+            "ego_quality": ego_score,
             "invocations": inv_score,
             "staleness": staleness_score,
             "deployed": deployed_score,

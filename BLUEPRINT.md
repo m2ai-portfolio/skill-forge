@@ -148,29 +148,40 @@ Skills are first-class citizens with the same rigor as agents — registered, ve
 
 ---
 
-## Phase 4: Ego Quality Judge
+## Phase 4: Ego Quality Judge (COMPLETE)
 
 **Goal:** Replace proxy metrics with LLM-evaluated skill quality.
 
-> **Prerequisite:** Phases 1-3 operational. Ego project unpaused and adapted.
+> **Status:** COMPLETE (2026-04-03)
 
 ### Deliverables
-- [ ] **Quality rubric** — what makes a skill output "good"?
-  - Correctness — does it produce working code/config?
-  - Completeness — does it cover the technique end-to-end?
-  - Clarity — are instructions unambiguous?
-  - Efficiency — does it avoid unnecessary steps or token waste?
-- [ ] **Ego skill evaluator** — mutation-evaluation loop applied to skills
-  - Input: skill definition + sample invocation context
-  - Output: quality score + specific improvement suggestions
-  - Feeds back to Forge for refinement
-- [ ] **Automated refinement pipeline** — Ego identifies weakness → Forge drafts improvement → PR for review
-- [ ] **Scorecard upgrade** — Ego quality score added to health scorecard (high weight)
+- [x] **Quality rubric** — `src/quality_rubric.py`
+  - Correctness (0-25) -- does it produce working code/config?
+  - Completeness (0-25) -- does it cover the technique end-to-end?
+  - Clarity (0-25) -- are instructions unambiguous?
+  - Efficiency (0-25) -- does it avoid unnecessary steps or token waste?
+  - Total: 0-100 aggregate across four dimensions
+- [x] **Ego skill evaluator** — `src/ego_evaluator.py`
+  - Input: skill SKILL.md content
+  - Output: QualityResult with per-dimension scores, feedback, and suggestions
+  - Uses Gemini (gemini-2.0-flash) as the judge model via google-generativeai SDK
+  - Supports: --update (write to registry), --dry-run, --threshold, single-skill targeting
+  - Results persisted as JSON in `data/ego_results/` for audit trail
+- [x] **Automated refinement pipeline** — `src/refinement_pipeline.py`
+  - Reads Ego evaluation results, generates structured proposals for flagged skills
+  - Proposals stored in `data/refinement_proposals/` as JSON (status: pending/applied/rejected)
+  - Identifies weakest dimensions and priority areas with severity levels
+  - Supports: --list (pending proposals), --threshold, --skill targeting
+- [x] **Scorecard upgrade** — `src/scorecard.py` updated
+  - When ego_quality_score present: ego 35%, invocations 25%, staleness 15%, deployed 15%, manual_rating 10%
+  - When ego absent but manual_rating present: invocations 40%, staleness 20%, deployed 20%, manual_rating 20%
+  - When both absent: invocations 50%, staleness 20%, deployed 30%
+  - Schema updated: `ego_quality_score` field added to metrics in `skill-registry-schema.json`
 
-### Design Decisions to Make
-- Ego execution model — local Ollama (AlienPC), cloud LLM, or hybrid?
-- Judgment cadence — every invocation? Periodic batch? On-demand?
-- Auto-merge threshold — can Ego-suggested minor improvements skip human review?
+### Design Decisions (Resolved)
+- Ego execution model: Cloud LLM (Gemini 2.0 Flash via google-generativeai SDK, API key from ~/.env.shared)
+- Judgment cadence: On-demand batch or single-skill evaluation (not per-invocation)
+- Auto-merge threshold: Not implemented -- all proposals require human review (pending data on quality)
 
 ---
 
