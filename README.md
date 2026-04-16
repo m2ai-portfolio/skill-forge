@@ -23,7 +23,7 @@ Content Source --> Technique Extraction --> SKILL.md Generation --> Review & Ins
 
 ---
 
-## Skill Catalog (50 skills)
+## Skill Catalog (55 skills)
 
 ### Agent Architecture (8 skills)
 
@@ -65,7 +65,7 @@ Content Source --> Technique Extraction --> SKILL.md Generation --> Review & Ins
 | **agent-doctor** | Comprehensive health check on connected services, API creds, MCP servers, tools | Something isn't working and you need a systems check |
 | **agent-readiness-audit** | Scores a codebase across 8 pillars for fitness to support autonomous AI agents | Evaluating whether a repo is ready for agent-driven development |
 
-### Strategic Analysis (8 skills)
+### Strategic Analysis (10 skills)
 
 | Skill | Summary | Use When |
 |-------|---------|----------|
@@ -77,8 +77,10 @@ Content Source --> Technique Extraction --> SKILL.md Generation --> Review & Ins
 | **counterargument-stress-test** | Generates and addresses the N strongest counterarguments against any thesis | Before publishing, presenting, or deciding on a strategic position |
 | **strategic-timing-matrix** | Maps decisions against macro events and market windows: accelerate/delay/hedge | Timing a launch, investment, or strategic move |
 | **management-function-audit** | Takes an org change description and classifies which management functions (routing, sensemaking, accountability) were removed, retained, or weakened — predicts failure modes with historical precedents | Auditing a reorg, layer removal, or any restructuring to understand what will break and in what order |
+| **news-narrative-decomposer** | Takes a batch of AI/tech news, classifies each item by altitude (physics, infrastructure, monetization, business models, geopolitics), extracts 3-5 structural shifts, and writes the through-line | Making sense of a month of AI/tech news to find what actually changed underneath the headlines |
+| **weekly-signal-diff** | Tracks N companies across M categories, re-ranks by relevance to active projects, diffs against last week, and persists state so signal compounds over time | Weekly personalized intelligence briefing to see what changed and why it matters to your specific work |
 
-### Developer Tooling (5 skills)
+### Developer Tooling (8 skills)
 
 | Skill | Summary | Use When |
 |-------|---------|----------|
@@ -87,6 +89,9 @@ Content Source --> Technique Extraction --> SKILL.md Generation --> Review & Ins
 | **agents-md-generator** | Generates or lints AGENTS.md files from repo analysis | Onboarding AI agents to a new repo |
 | **mcp-compatibility-scanner** | Scans MCP server implementations for protocol compliance (draft) | Verifying an MCP server before publishing or deploying |
 | **visual-qa-loop** | Recursive build-inspect-fix loop using Claude-in-Chrome for visual verification (draft) | UI work where you need visual regression checking |
+| **comprehension-gate** | Pre-merge review checking PR implications -- credentials, data leaks, tokens without TTL, blast radius, shared caching. Produces a comprehension artifact, not pass/fail | Before merging a PR to verify someone understood the security and architectural implications |
+| **context-layer-generator** | Generates three context artifacts for any module: structural manifest, behavioral contracts, and a decision log pre-filled from git history | Documenting a module or service so humans and AI agents can safely understand and modify it |
+| **spec-driven-dev-enforcer** | Gates code generation behind explicit approval of a requirements doc, design doc, and task decomposition -- prevents AI from jumping straight to implementation | Enforcing spec-first development when you want comprehension artifacts before any code is written |
 
 ### Context & Token Management (5 skills)
 
@@ -258,7 +263,7 @@ skills/
 
 ```
 skill-forge/
-  skills/               # 50 skills (cold archive + active)
+  skills/               # 55 skills (cold archive + active)
   data/
     intake/             # Newsletter/content input staging
     skill_invocations.db # Invocation tracking (SQLite)
