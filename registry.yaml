@@ -136,3 +136,9 @@ skills:
     domain: agent-architecture
     health_score: 0.0
 
+  - name: model-migration-preflight
+    version: "1.0.0"
+    status: draft
+    domain: developer-tooling
+    health_score: 0.0
+
