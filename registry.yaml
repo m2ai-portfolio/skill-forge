@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-03-30"
-total_skills: 18
+generated_at: "2026-04-27"
+total_skills: 27
 by_status:
   active: 17
-  draft: 1
+  draft: 10
 
 skills:
   - name: agent-cost-model
@@ -117,4 +117,112 @@ skills:
     status: draft
     domain: content-creation
     health_score: 19.0
+
+  - name: memory-fingerprint-architect
+    version: "1.0.0"
+    status: draft
+    source:
+      type: youtube
+      url: "https://www.youtube.com/watch?v=OMkdlwZxSt8"
+      author: "Mark Kashef"
+      date: "2026-04-22"
+    taxonomy:
+      domain: memory-systems
+      complexity: intermediate
+
+  - name: claude-design-to-code
+    version: "1.0.0"
+    status: draft
+    source:
+      type: youtube
+      url: "https://www.youtube.com/watch?v=TJRsTwi1McI"
+      author: "Mark Kashef"
+      date: "2026-04-17"
+    taxonomy:
+      domain: frontend-design
+      complexity: beginner
+
+  - name: agent-sdk-layer-stack
+    version: "1.0.0"
+    status: draft
+    source:
+      type: youtube
+      url: "https://www.youtube.com/watch?v=rVzGu5OYYS0"
+      author: "Mark Kashef"
+      date: "2026-04-14"
+    taxonomy:
+      domain: agent-architecture
+      complexity: advanced
+
+  - name: api-breaking-change-scanner
+    version: "1.0.0"
+    status: draft
+    source:
+      type: newsletter
+      url: "https://natesnewsletter.substack.com/p/opus-4-7"
+      author: "Nate Kadlac"
+      date: "2026-04-21"
+    taxonomy:
+      domain: developer-tooling
+      complexity: beginner
+
+  - name: hive-mind-shared-context
+    version: "1.0.0"
+    status: draft
+    source:
+      type: youtube
+      url: "https://www.youtube.com/watch?v=rVzGu5OYYS0"
+      author: "Mark Kashef"
+      date: "2026-04-14"
+    taxonomy:
+      domain: agent-architecture
+      complexity: advanced
+
+  - name: memory-system-assembler
+    version: "1.0.0"
+    status: draft
+    source:
+      type: youtube
+      url: "https://www.youtube.com/watch?v=OMkdlwZxSt8"
+      author: "Mark Kashef"
+      date: "2026-04-22"
+    taxonomy:
+      domain: context-management
+      complexity: intermediate
+
+  - name: adversarial-dual-model-workflow
+    version: "1.0.0"
+    status: draft
+    source:
+      type: youtube
+      url: "https://www.youtube.com/watch?v=Fu5KIG2Jm1g"
+      author: "Mark Kashef"
+      date: "2026-04-26"
+    taxonomy:
+      domain: developer-tooling
+      complexity: intermediate
+
+  - name: inference-vendor-lock-in-scorer
+    version: "1.0.0"
+    status: draft
+    source:
+      type: newsletter
+      url: "https://natesnewsletter.substack.com/p/executive-briefing-the-ai-race-youre"
+      author: "Nate Kadlac"
+      date: "2026-04-26"
+    taxonomy:
+      domain: agent-architecture
+      complexity: beginner
+
+  - name: ai-cost-exposure-audit
+    version: "1.0.0"
+    status: draft
+    source:
+      type: newsletter
+      url: "https://natesnewsletter.substack.com/p/executive-briefing-the-ai-race-youre"
+      author: "Nate Kadlac"
+      date: "2026-04-26"
+    taxonomy:
+      domain: strategic-analysis
+      complexity: intermediate
 
