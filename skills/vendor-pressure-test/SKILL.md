@@ -1,143 +1,141 @@
 ---
 name: vendor-pressure-test
-description: Run a vendor pitch deck, RFP response, or internal proposal through the 7-row agent control-layer lens. Identifies which rows are answered, which are dodged, and what each dodge costs in production. Use when asked "pressure-test this vendor", "what is this pitch dodging", "evaluate this agent infrastructure proposal", "vendor control review", "/vendor-pressure-test".
+description: Run a vendor pitch, RFP response, or internal proposal through the 7-row agent control-layer lens to identify which rows are answered, dodged, or hidden behind buzzwords, and what each dodge costs in production. Use when evaluating a vendor for an agent deployment, responding to an RFP, or stress-testing your own internal proposal before presenting it.
 ---
 
 # Vendor Pitch Pressure-Test
 
-Applies the 7-row agent control-layer framework as a skeptic lens to vendor pitches, RFP responses, and internal proposals. Separates answers from dodges and prices each dodge in production risk.
+Stress-tests any agent-related vendor pitch, RFP response, or internal proposal by running it through the 7-row agent control-layer framework. Identifies exactly what is answered, what is evaded, and what the evasion costs if you buy.
 
-## When to Invoke
+## Trigger
 
-Trigger on: "pressure-test this vendor", "what is this proposal dodging", "vendor control review", "evaluate this agent pitch", "RFP pressure test", "is this vendor pitch real", "/vendor-pressure-test".
+Use when the user:
+- Provides a vendor pitch deck, RFP response, or internal proposal and asks "is this solid?", "what are they hiding?", or "should we buy this?"
+- Says "pressure-test this pitch", "vendor stress test", "run the 7-row check on this vendor", or "/vendor-pressure-test"
+- Is on the buying side and wants to know which questions to ask a vendor before signing
 
-## Inputs
+## Phase 1: Intake
 
-Ask the user (skip any already answered):
+Accept the vendor material. This can be:
+- A pitch deck or slide summary
+- An RFP response document
+- An internal proposal ("we should use X for our agent runtime")
+- A product one-pager or website copy
 
-1. **The artifact** — paste the pitch deck text, RFP response, proposal, or product page URL
-2. **Procurement context** — what problem is this vendor claiming to solve? (runtime, data, identity, payments, observability, or "full-stack agent platform")
-3. **Claimed rows** — which of the 7 control rows does the vendor claim to own? (let them state it before you probe)
-4. **Deal stage** — early evaluation, shortlist, or contract-ready? (calibrates how hard to push)
+Ask the user: "What is this vendor claiming to solve?" if the pitch purpose is unclear. Do not proceed without understanding the claimed value.
 
-## The 7-Row Pressure Test
+## Phase 2: 7-Row Pressure Test
 
-For each row, apply three lenses: **What did they say? What did they dodge? What does the dodge cost?**
+For each row, determine whether the vendor pitch **answers**, **dodges**, or **is silent** on that row. Then assess the cost of the dodge.
 
-### Row 1 — Runtime
+Scoring:
+- **ANSWERED**: the vendor explicitly addresses this row with verifiable claims (API docs, SLA, configuration options)
+- **DODGED**: the vendor mentions the row but deflects with marketing language, vague promises, or "roadmap" claims
+- **SILENT**: the vendor does not address this row at all
 
-*Did they explain how the agent is paused, cancelled, or timed out mid-run?*
+### Row 1: Runtime
+Does the vendor's product expose a documented cancel/pause API for running agent tasks?
 
-Red flags:
-- "Reliable, scalable infrastructure" with no mention of pause/cancel API
-- Timeout described only in terms of cost optimization, not safety
-- No SLA on run termination latency
+Dodge signals: "managed runtime", "always-on", "you don't need to worry about that."
+Silence cost: you cannot stop a runaway agent without killing the entire service.
 
-Dodge price: Runaway agent, stuck job, or infinite-loop LLM call that bills until someone notices.
+### Row 2: Governed Data
+Does the vendor describe data access policy enforcement, scoping, and audit trails at the agent level?
 
-### Row 2 — Governed Data
+Dodge signals: "enterprise-grade security", "SOC 2 certified", "GDPR compliant" without per-agent data scoping details.
+Silence cost: your agent runs on shared broad credentials; a compromised agent exposes everything.
 
-*Did they explain how data access is enforced at the storage layer?*
+### Row 3: Identity / Principal
+Does the vendor provide per-agent machine identity that is independently revocable?
 
-Red flags:
-- "LLM-enforced" data access (prompt instruction, not policy)
-- "We support RBAC" without specifying whether it applies to the agent credential or the human user credential
-- Vague references to "data governance" without row-level or attribute-level specifics
+Dodge signals: "API key management", "team-level access control", "SSO integration."
+Silence cost: revoking a rogue agent's identity also breaks every other service using the same key.
 
-Dodge price: Agent reads data it was "told" not to read. Prompt injection overrides the instruction.
+### Row 4: Action Authorization
+Does the vendor provide runtime enforcement of agent action allowlists (not just documentation)?
 
-### Row 3 — Identity / Principal
+Dodge signals: "configurable", "flexible permissions", "you control what the agent can do" with no description of enforcement mechanism.
+Silence cost: agent can call any connected API; configuration drift is undetected until an incident.
 
-*Did they explain what credential the agent presents, how it is scoped, and how it is revoked?*
+### Row 5: Payment Authority
+Does the vendor expose per-agent spend limits and a programmatic freeze?
 
-Red flags:
-- "Secure by design" with no mention of credential scope
-- Shared credentials across agents in the same tenant
-- Revocation described as "contact support" or "redeploy the stack"
+Dodge signals: "usage-based pricing", "set your budget in the dashboard", "billing alerts."
+Silence cost: a looping or compromised agent can spend unbounded amounts before a human notices.
 
-Dodge price: Compromised credential affects all agents in the tenant. Revocation takes hours or days.
+*If the vendor's product has no payment component, score this row N/A.*
 
-### Row 4 — Action Authorization
+### Row 6: Observability
+Does the vendor provide structured, per-run trace logs of every tool call with inputs, outputs, and cost?
 
-*Did they describe an allow-list or policy layer that gates what the agent can write or call?*
+Dodge signals: "real-time monitoring", "dashboards", "analytics" without specifying what is logged at the tool-call level.
+Silence cost: you cannot reconstruct what the agent did after an incident; compliance audits fail.
 
-Red flags:
-- "Guardrails" that are LLM-evaluated, not policy-enforced
-- "Customizable permissions" described only via UI toggle, not machine-readable policy
-- No mention of who defines the allow-list and how it is audited
+### Row 7: Kill Switch
+Does the vendor describe a coordinated multi-layer kill path (not just "stop button")?
 
-Dodge price: Agent calls APIs or writes data outside its intended scope. Discovered after the fact.
+Dodge signals: "emergency stop", "pause feature", "contact support to deactivate."
+Silence cost: stopping a live agent requires coordinating multiple manual steps across teams during an incident.
 
-### Row 5 — Payment Authority
+## Phase 3: Dodge Analysis
 
-*If the vendor touches payments, did they describe spend caps enforced at the payment layer?*
+For each DODGED or SILENT row:
+1. Name the exact language the vendor used (quote it if available)
+2. Explain the gap between the language and what is actually needed
+3. State the production cost if you deploy without this row answered
 
-Red flags:
-- "Budget-aware agents" that read a budget from a config file (agent-controlled)
-- No mention of a payment-layer freeze mechanism
-- Spend cap described as a prompt constraint ("tell the agent its budget")
-
-Dodge price: Agent exceeds budget. No hard stop. Discovered on the invoice.
-
-If the vendor does not touch payments, note "Row 5: N/A — vendor does not own payment layer."
-
-### Row 6 — Observability
-
-*Did they describe logs that are queryable after the fact and include decision context?*
-
-Red flags:
-- "Full visibility" with screenshots of a dashboard but no mention of log retention or query API
-- Logs described as real-time only (tail) with no historical query capability
-- No cost-per-run metric visible in the demo
-- "Trace" described but no mention of whether it captures tool-call inputs and outputs
-
-Dodge price: Post-incident investigation is impossible. Cannot answer "what did the agent do at 2am."
-
-### Row 7 — Kill Switch
-
-*Did they describe a coordinated stop across all 5 kill layers?*
-
-Red flags:
-- "Just stop the container" (runtime-only kill, credential stays live)
-- "Revoke the API key" (identity kill, but runtime and payment stay live)
-- No mention of payment freeze
-- "Kill switch" section in the pitch that describes a single-layer stop as complete
-
-Dodge price: Stopping the runtime does not stop the credential from being used by a compromised copy. Stopping the credential does not freeze a payment in flight.
-
-## Output Format
+## Phase 4: Report
 
 ```
-VENDOR PRESSURE TEST — [Vendor / Proposal Name]
-Assessed: [date]
-Context: [what they claim to solve]
+## Vendor Pressure Test: [Vendor/Product Name]
+Date: [date]
+Evaluator: [context, e.g. "evaluating for agent runtime replacement"]
 
-| Row | Name | Their Claim | Dodge? | Dodge Price |
-|-----|------|-------------|--------|-------------|
-| 1 | Runtime | [quote or paraphrase] | YES / NO / PARTIAL | [risk if dodged] |
-| 2 | Governed Data | … | … | … |
-| 3 | Identity | … | … | … |
-| 4 | Action Authorization | … | … | … |
-| 5 | Payment Authority | … | … | … |
-| 6 | Observability | … | … | … |
-| 7 | Kill Switch | … | … | … |
+| Row | Name | Status | Vendor's Claim (or silence) |
+|-----|------|--------|-----------------------------|
+| 1 | Runtime | ANSWERED/DODGED/SILENT | [exact claim or "not mentioned"] |
+| 2 | Governed Data | ... | ... |
+| 3 | Identity/Principal | ... | ... |
+| 4 | Action Authorization | ... | ... |
+| 5 | Payment Authority | ... / N/A | ... |
+| 6 | Observability | ... | ... |
+| 7 | Kill Switch | ... | ... |
 
-ROWS ANSWERED: [N/7]
-ROWS DODGED: [N] — [names]
-HIGHEST-COST DODGE: Row [N] — [name] — [one-sentence risk]
+### Dodges and Their Costs
+**Row [N] - [Row Name]**: "[exact vendor language]"
+Gap: [what is actually needed vs. what was said]
+Cost: [what breaks in production if you buy without this answered]
 
-PROCUREMENT VERDICT: PROCEED / PROCEED WITH CONDITIONS / REJECT
-CONDITIONS (if any): [numbered list of must-answer questions before signing]
+[Repeat for each DODGED or SILENT row]
+
+### Questions to Ask Before Signing
+1. [Row N]: "[Specific question that forces a verifiable answer, not a sales answer]"
+2. [Row N]: ...
+
+### Recommendation
+PROCEED - all critical rows answered; minor gaps documented.
+DUE DILIGENCE - [N] rows dodged; get written commitments before signing.
+PASS - [N] rows silent on critical production requirements.
 ```
+
+## Phase 5: Follow-up Offers
+
+After delivering the report, offer:
+- "Want me to run your own proposal through the same lens?" (run `/control-map` on the internal alternative)
+- "Want to map which vendor covers which rows across the competitive landscape?" (run `/vendor-map` if available)
 
 ## Verification
 
-A complete pressure test:
-- Distinguishes LLM-enforced controls from policy-enforced controls for every row
-- Does not accept "enterprise-grade" or "secure by design" as a row answer
-- Produces a PROCUREMENT VERDICT with named conditions, not a vague "due diligence recommended"
-- Is specific enough to be sent back to the vendor as a list of required clarifications
+A good pressure-test pass:
+- Quotes or cites specific vendor language for DODGED rows (not inferred from generic sales material)
+- Distinguishes "marketing claim" from "verifiable API / SLA / configuration option"
+- Produces at least one question per DODGED or SILENT row that forces a concrete, checkable answer
+- Does not recommend PROCEED if any critical row (Runtime, Identity, Kill Switch) is SILENT
 
-## Source Attribution
+## Source
 
-Technique derived from Nate's Newsletter (2026-05-20): "Seven questions decide whether your AI agent ships. Most teams can answer two." — the Vendor-Pitch Pressure-Test idea (#2), applying the 7-row control-layer as a skeptic lens to vendor claims.
+Extracted from Nate's Newsletter (natesnewsletter@substack.com), captured 2026-05-20.
+Article: "Seven questions decide whether your AI agent ships. Most teams can answer two."
+URL: https://natesnewsletter.substack.com/p/agent-infrastructure-control-layer
+Technique: 7-row skeptic lens for evaluating vendor agent-control claims.
+Related: counterargument-stress-test (general argument pressure-testing), control-map (design-side 7-row evaluation).

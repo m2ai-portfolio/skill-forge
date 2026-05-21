@@ -3,7 +3,6 @@ version: "1.0.0"
 status: draft
 created: "2026-05-21"
 last_reviewed: null
-sync_hash: null
 
 source:
   type: newsletter
@@ -12,8 +11,8 @@ source:
   date: "2026-05-20"
 
 taxonomy:
-  domain: agent-safety
-  complexity: intermediate
+  domain: agent-infrastructure
+  complexity: beginner
 
 metrics:
   invocations_30d: 0

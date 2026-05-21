@@ -1,149 +1,148 @@
 ---
 name: kill-switch-audit
-description: For a named agent in production, verify that a real kill path exists at each of the 5 layers (runtime cancel, credential revocation, gateway tool-call block, payment freeze, workflow interrupt). Produces a per-layer pass/fail checklist and a KILLABLE / NOT KILLABLE verdict. Use when asked "can we actually stop this agent", "kill switch audit", "verify kill paths", "agent kill check", "/kill-switch-audit".
+description: Verify that a named agent in production has a real, one-step kill path at each of 5 layers (runtime cancel, credential revocation, gateway block, payment freeze, workflow interrupt). Use before shipping a new autonomous agent, during a security review, or any time you need to answer "can we actually stop this agent right now?"
 ---
 
 # Kill-Switch Audit
 
-Verifies that a real, tested kill path exists at each of the 5 shutdown layers for a named agent in production. A single-layer kill is not a kill switch — this audit confirms all 5.
+Verifies that a live or pre-production agent has a documented, executable kill path at each of the 5 layers that constitute a complete emergency stop. Produces a per-layer pass/fail receipt with remediation for any layer that fails.
 
-## When to Invoke
+## Trigger
 
-Trigger on: "can we actually stop this agent", "kill switch audit", "verify kill paths", "is our kill switch real", "agent shutdown audit", "do we have a real kill switch", "/kill-switch-audit".
+Use when the user:
+- Says "kill-switch audit", "can we stop this agent?", "verify our kill paths", or "/kill-switch-audit"
+- Is about to deploy an autonomous agent and wants to confirm stop controls exist
+- Suspects an agent is misbehaving and needs to know which kill paths are actually available right now
+- Is responding to a security review that asks "how do you stop a rogue agent?"
 
-## Inputs
+## Phase 1: Agent Intake
 
-Ask the user (skip any already answered):
+Ask for:
+- Agent name or description
+- Runtime environment (Claude Code, LangGraph, Temporal, custom scheduler, etc.)
+- Identity mechanism (service account, API key, bot token)
+- Whether the agent can make payments or call payment APIs
+- Whether the agent uses a workflow framework (LangGraph, Prefect, Temporal, etc.)
 
-1. **Agent name and role** — what does the agent do, what systems does it call?
-2. **Deployment environment** — where does it run? (container, Lambda, cron, long-running process, orchestration framework)
-3. **Identity credential** — what credential does the agent use? (API key, service account, OAuth token, IAM role)
-4. **Tool-call gateway** — does the agent route tool calls through a proxy, MCP server, or API gateway, or does it call external APIs directly?
-5. **Payment authority** — can the agent initiate any financial transaction or incur billable cost? (yes/no, and which instrument if yes)
-6. **Workflow orchestrator** — is the agent embedded in an orchestration framework? (LangGraph, Temporal, Prefect, custom scheduler, or none)
-7. **Last tested** — when was any kill path last tested in a non-production environment? (date or "never")
+If the user cannot answer these questions, note which layers will be scored UNKNOWN rather than PASS/FAIL.
 
-## The 5-Layer Kill Matrix
+## Phase 2: 5-Layer Kill-Switch Verification
 
-Evaluate each layer in order. A layer is PASS only if both a mechanism and an owner exist.
+Evaluate each layer independently. Score PASS / PARTIAL / FAIL / UNKNOWN.
 
-### Layer 1 — Runtime Cancel / Pause
+### Layer 1: Runtime Cancel
+Can the agent's current execution be stopped mid-run without killing the entire host process?
 
-*Can the running process be stopped within 60 seconds without a full redeploy?*
+Verification questions:
+- Is there a cancellation endpoint or signal that takes effect within one tool-call cycle?
+- If the agent is scheduled, does cancelling the current run prevent the next scheduled run?
+- Does cancellation produce a clean state (no orphaned side effects)?
 
-Gather:
-- What command or API call stops the agent mid-run? (SIGTERM, container stop, Lambda abort, queue drain)
-- Who has access to run that command in production?
-- Has it been tested against a live (non-prod) run in the last 90 days?
+**PASS**: explicit cancel/pause API exists; tested or documented; stops within one cycle.
+**PARTIAL**: process kill is possible (SIGTERM/SIGKILL) but state is lost or next run fires immediately.
+**FAIL**: no documented stop mechanism other than killing the host machine.
+**UNKNOWN**: insufficient information to verify.
 
-Pass condition: Named mechanism + named owner + tested within 90 days.
+### Layer 2: Credential Revocation
+Can the agent's identity (API key, service account, bot token) be revoked in one step without affecting other services?
 
-Partial: Mechanism exists but not tested, OR mechanism exists but owner is "the team."
+Verification questions:
+- Does the agent use its own dedicated credential (not shared with humans or other services)?
+- Is revocation a single API call or dashboard action (not a multi-step service restart)?
+- After revocation, do subsequent API calls fail immediately (not after TTL expiry)?
 
-Fail: "We would redeploy" / "we would restart the service" / no clear mechanism.
+**PASS**: dedicated credential exists; one-step revocation confirmed; immediate effect.
+**PARTIAL**: dedicated credential exists but revocation requires a service restart, or TTL means the agent can continue calling APIs for minutes/hours after revocation.
+**FAIL**: agent uses a shared credential; revoking it breaks other services, making revocation impractical.
+**UNKNOWN**: insufficient information to verify.
 
-### Layer 2 — Credential Revocation
+### Layer 3: Gateway Block
+Can the agent's outbound tool calls be blocked at the gateway layer without touching the agent's code?
 
-*Can the agent's identity credential be revoked within 5 minutes, independent of runtime state?*
+Verification questions:
+- Is there an MCP server, API gateway, or firewall rule that mediates the agent's tool calls?
+- Can specific tools or all tools be blocked by updating the gateway config (not redeploying the agent)?
+- Is the block effective immediately without a cache TTL delay?
 
-Gather:
-- Where is the credential issued? (IAM console, API key management UI, OAuth provider dashboard)
-- Can a single person revoke it without a deployment or code change?
-- Does revocation propagate immediately to all in-flight calls, or does the agent cache the credential?
-- Is the credential shared with other agents or services?
+**PASS**: gateway layer exists and can block specific tools or all tools in under 60 seconds.
+**PARTIAL**: gateway exists but blocking requires a redeployment or has a multi-minute TTL delay.
+**FAIL**: agent calls APIs directly; no intermediary layer to block.
+**UNKNOWN**: insufficient information to verify.
 
-Pass condition: Single-person revocation, propagates in < 5 min, credential is not shared.
+### Layer 4: Payment Freeze
+Can the agent's payment instrument be frozen independently of other agents and services?
 
-Partial: Revocation possible but takes > 5 min, OR credential is shared (revoking it breaks other services).
+Verification questions:
+- Does the agent have its own payment instrument (not a shared company card or API key)?
+- Is there a one-step freeze that stops charges without freezing the whole account?
+- Is an audit log of agent-initiated charges available to reconstruct spending?
 
-Fail: Credential is hardcoded in source, embedded in a deploy artifact, or requires a deployment to rotate.
+**PASS**: per-agent payment instrument with one-step freeze and charge audit log.
+**PARTIAL**: shared payment instrument with a global spending cap; no per-agent freeze.
+**FAIL**: agent has payment access with no programmatic limit or freeze mechanism.
+**N/A**: agent cannot initiate payments. Mark N/A and skip.
 
-### Layer 3 — Gateway / Tool-Call Block
+### Layer 5: Workflow Interrupt
+If the agent uses a workflow framework, can an in-progress workflow be stopped via that framework's API?
 
-*Can the agent's outbound tool calls be blocked at a gateway layer, independent of credential and runtime?*
+Verification questions:
+- Does the agent use LangGraph, Temporal, Prefect, Celery, or a similar workflow framework?
+- Does that framework expose a workflow cancellation API (not just process kill)?
+- Can a specific workflow run be stopped without stopping all runs?
 
-Gather:
-- Do the agent's tool calls pass through a proxy, MCP server, or API gateway that has a deny-list?
-- Can a specific agent's client ID or session be blocked without blocking all traffic?
-- Does the gateway log which agent made each call?
+**PASS**: workflow framework exposes cancellation API; specific run can be stopped.
+**PARTIAL**: framework supports cancellation but it requires admin access or affects all concurrent runs.
+**FAIL**: no workflow framework interrupt available; only process kill.
+**N/A**: agent does not use a workflow framework. Mark N/A.
 
-Pass condition: Gateway deny-list exists, per-agent block is possible, and gateway logs are queryable.
-
-Partial: Gateway exists but blocks at the API-key level (same as credential revocation, not independent).
-
-Fail: Agent calls external APIs directly with no proxy layer. No gateway.
-
-### Layer 4 — Payment Instrument Freeze
-
-*If the agent has payment authority, can it be frozen at the payment layer within 10 minutes?*
-
-If the agent cannot initiate financial transactions and cannot trigger billable actions (LLM API calls billed externally, database writes, etc.): mark Layer 4 as **N/A** and note why.
-
-Otherwise, gather:
-- What payment instrument does the agent use? (Stripe payment method, corporate card, spend-limited service account)
-- Who can freeze or revoke it in the payment provider's UI?
-- Is there a hard spend cap enforced at the payment layer (not in the agent prompt)?
-- Has the freeze mechanism been tested?
-
-Pass condition: Named payment instrument + named owner who can freeze it + hard cap enforced at payment layer.
-
-Partial: Spend cap exists but is prompt-enforced only, OR freeze requires a support ticket.
-
-Fail: No spend cap. Agent can spend without a ceiling. No identified freeze mechanism.
-
-### Layer 5 — Workflow / Orchestration Interrupt
-
-*If the agent runs inside an orchestration framework, can its workflow be interrupted without killing the runtime?*
-
-If the agent runs standalone with no orchestration framework: mark Layer 5 as **N/A** and note it.
-
-Otherwise, gather:
-- What orchestration framework manages the agent? (LangGraph, Temporal, Prefect, Airflow, custom scheduler)
-- Is there a cancel/interrupt API for in-flight workflow runs?
-- Can a specific run be interrupted without stopping the entire worker pool?
-- Are workflow interrupts distinguished from failures in the run log?
-
-Pass condition: Per-run interrupt API exists, distinguishable from failure in logs, tested within 90 days.
-
-Partial: Interrupt exists but stops the whole worker pool, OR interrupt is not tested.
-
-Fail: Workflow interrupts the only option is stopping the underlying runtime (same as Layer 1). No orchestration-level kill.
-
-## Output Format
+## Phase 3: Kill-Switch Receipt
 
 ```
-KILL-SWITCH AUDIT — [Agent Name]
-Assessed: [date]
-Environment: [deployment target]
+## Kill-Switch Audit: [Agent Name]
+Date: [date]
 
-| Layer | Name | Status | Owner | Mechanism | Last Tested |
-|-------|------|--------|-------|-----------|-------------|
-| 1 | Runtime Cancel | PASS / FAIL / PARTIAL / N/A | [name] | [command/API] | [date] |
-| 2 | Credential Revocation | PASS / FAIL / PARTIAL | [name] | [system/console] | [date] |
-| 3 | Gateway Block | PASS / FAIL / PARTIAL / N/A | [name] | [gateway name] | [date] |
-| 4 | Payment Freeze | PASS / FAIL / PARTIAL / N/A | [name] | [instrument/system] | [date] |
-| 5 | Workflow Interrupt | PASS / FAIL / PARTIAL / N/A | [name] | [framework/API] | [date] |
+| Layer | Name | Status | Evidence / Gap |
+|-------|------|--------|---------------|
+| 1 | Runtime Cancel | PASS/PARTIAL/FAIL/UNKNOWN | [what was verified or what is missing] |
+| 2 | Credential Revocation | ... | ... |
+| 3 | Gateway Block | ... | ... |
+| 4 | Payment Freeze | ... / N/A | ... |
+| 5 | Workflow Interrupt | ... / N/A | ... |
 
-LAYERS PASSED: [N/5 applicable]
-BLOCKING GAPS: [layer names that are FAIL or PARTIAL]
+### Overall Kill-Switch Status
+COMPLETE - 4+ layers PASS (or N/A where applicable). Agent can be stopped reliably.
+PARTIAL - [N] layers PASS, [N] PARTIAL/FAIL. Kill is possible but requires multi-step coordination.
+INCOMPLETE - [N] layers FAIL or UNKNOWN. Do not deploy to production without remediation.
 
-KILL-SWITCH VERDICT: KILLABLE / NOT KILLABLE
-[One-sentence reason if NOT KILLABLE — the specific layer that makes a real kill impossible]
+### Remediation (ordered by ease)
+1. **Layer [N] - [Name]**: [Specific action to establish or fix this kill path.]
+2. [Next...]
 
-REMEDIATION PRIORITY:
-1. [Highest-risk gap — concrete action, not a suggestion]
-2. [Second gap if present]
+### Incident Response Guide (if status is COMPLETE or PARTIAL)
+If the agent needs to be stopped right now:
+1. [Layer with fastest effect]: [exact command or action]
+2. [Next fastest]: [exact command or action]
+3. [Remaining layers to close the loop]: [exact command or action]
 ```
+
+## Phase 4: Follow-up Offers
+
+After delivering the receipt, offer:
+- "Want to run the full 7-row control map for this agent?" (run `/control-map`)
+- "Want to document this kill procedure in the agent's AGENTS.md?"
 
 ## Verification
 
-A complete audit:
-- Distinguishes each layer as mechanically independent (credential revocation ≠ runtime stop)
-- Does not accept "we can redeploy to stop it" as a runtime cancel
-- Does not accept "we would email the ops team" as an owner
-- Does not accept untested mechanisms as PASS (at most PARTIAL)
-- Produces a KILLABLE verdict only when all applicable layers are PASS
+A good kill-switch audit:
+- Scores every layer (no skipping; UNKNOWN is valid when information is unavailable)
+- Does not score a layer PASS based on assumed or theoretical capability - only verified documentation, tested paths, or explicit configuration
+- Produces an incident response guide (ordered by kill speed) when status is COMPLETE or PARTIAL
+- Distinguishes "kill process" (brute force) from "cancel gracefully" (designed kill path)
 
-## Source Attribution
+## Source
 
-Technique derived from Nate's Newsletter (2026-05-20): "Seven questions decide whether your AI agent ships. Most teams can answer two." — the 5-Layer Kill-Switch Audit idea (#3), grounded in the 5-layer kill path taxonomy for production agent control.
+Extracted from Nate's Newsletter (natesnewsletter@substack.com), captured 2026-05-20.
+Article: "Seven questions decide whether your AI agent ships. Most teams can answer two."
+URL: https://natesnewsletter.substack.com/p/agent-infrastructure-control-layer
+Technique: 5-layer kill-switch verification protocol for production agents.
+Related: control-map (full 7-row agent control audit, of which kill switch is Row 7).

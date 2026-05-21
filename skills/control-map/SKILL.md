@@ -1,144 +1,155 @@
 ---
 name: control-map
-description: Walk an agent workflow through all 7 control-layer rows (runtime, governed data, identity/principal, action authorization, payment authority, observability, kill switch) and report which row fails first with a concrete remediation. Use when asked "is this agent safe to ship", "audit my agent workflow", "control layer review", "which control row does my agent fail", or "/control-map".
+description: Walk any agent workflow through a 7-row control map (runtime, governed data, identity/principal, action authorization, payment authority, observability, kill switch) to identify which row fails first and generate concrete remediations. Use when designing a new agent workflow, auditing an existing one, or answering "what controls does this agent have?" before shipping.
 ---
 
-# Control-Map Assessment
+# Control Map
 
-Evaluates an agent workflow against the 7-row control-layer framework. Identifies which row fails first and what must be fixed before production.
+Walk any agent workflow through the 7 load-bearing control rows that separate a safe, production-grade agent from a "scary" one. Identifies the first failing row and produces targeted remediations.
 
-## When to Invoke
+## Trigger
 
-Trigger on: "is this agent safe to ship", "audit my agent workflow", "control layer review", "fill in my control map", "what row does my agent fail", "agent infrastructure review", "/control-map".
+Use when the user:
+- Describes an agent workflow and asks "is this safe to ship?", "what controls does it have?", or "which row fails first?"
+- Says "run the control map", "control layer audit", "7-row check", or "/control-map"
+- Is designing a new agent and wants to sanity-check the control architecture before writing code
 
-## Inputs
+## Phase 1: Workflow Intake
 
-Ask the user (skip any already answered):
+Accept a description of the agent workflow. Ask for:
+- What the agent does (purpose and scope)
+- What tools, APIs, or systems it calls
+- Whether it can spend money, write to persistent storage, or send external messages
+- Whether it runs autonomously (scheduled) or only on human request
 
-1. **Workflow description** — what the agent does, what data it reads, what actions it takes, what external systems it calls
-2. **Deployment target** — local dev, cloud (provider), or distributed/multi-region
-3. **Sensitive data involved** — PII, financial records, health data, credentials, or none
-4. **Human-in-the-loop** — is a human in the approval path for any action, or is the agent fully autonomous?
-5. **Payment or spend authority** — can the agent initiate any financial transaction, charge a card, or commit spend?
+If the description is vague, ask one clarifying question before proceeding.
 
-## The 7-Row Control Map
+## Phase 2: 7-Row Control Map Evaluation
 
-Walk the workflow through each row in order. Report the first row that has no answer as the **blocking gap**. Continue through all rows to produce the full map.
+Evaluate each row in order. Answer PRESENT / PARTIAL / ABSENT with one-line evidence:
 
-### Row 1 — Runtime
+### Row 1: Runtime
+Can the agent's execution be paused or cancelled mid-run?
 
-*Can you pause or cancel the agent mid-run?*
+Evidence to look for: process kill signal, task cancellation endpoint, timeout enforced at the runner level, ability to stop the agent loop without losing state.
 
-Questions to answer:
-- What process or service hosts the agent at runtime? (Lambda, container, cron, long-running process?)
-- Is there a pause/cancel API, a TTY signal path, or a timeout that terminates the run?
-- If the run hangs or loops, what stops it?
+**PRESENT**: runtime has an explicit cancel/pause endpoint that takes effect within one tool-call cycle.
+**PARTIAL**: process can be killed externally but state is lost or the next schedule re-runs immediately.
+**ABSENT**: no documented way to stop a running agent instance other than killing the host process.
 
-Pass condition: A concrete stop mechanism exists and has been tested at least once.
+### Row 2: Governed Data
+Is the data the agent reads and writes protected by access policy?
 
-### Row 2 — Governed Data
+Evidence to look for: row-level security, scoped read tokens, data access logged per-agent, no broad wildcard SELECT or write grants.
 
-*Does the agent only see data it is authorized to see?*
+**PRESENT**: agent uses scoped credentials with policy enforcement; wildcard grants are absent.
+**PARTIAL**: access is scoped but not audited, or logging exists but policy enforcement is absent.
+**ABSENT**: agent uses shared admin credentials or broad production database access.
 
-Questions to answer:
-- What data sources does the agent query? (databases, APIs, file systems, vector stores)
-- Are row-level or attribute-level policies enforced at the data layer, or only in the agent prompt?
-- Can the agent exfiltrate data outside its declared scope?
+### Row 3: Identity / Principal
+Does the agent have a distinct, durable identity separate from a human user?
 
-Pass condition: Data access is enforced at the storage layer, not just by prompt instruction.
+Evidence to look for: dedicated service account or bot token (not a personal API key), machine identity that can be revoked independently, identity traceable to the agent in audit logs.
 
-### Row 3 — Identity / Principal
+**PRESENT**: agent has its own service identity; revocation of that identity stops the agent without affecting humans.
+**PARTIAL**: agent uses a shared bot token or a scoped personal token but revoking it would also break other services.
+**ABSENT**: agent operates under a human user's credentials.
 
-*Does the agent have a stable, revocable identity that records what it acts as?*
+### Row 4: Action Authorization
+Is there an explicit allowlist of actions the agent is permitted to take?
 
-Questions to answer:
-- What credential does the agent present to external systems? (API key, service account, OAuth token)
-- Is this credential scoped to least-privilege?
-- Can you revoke it without redeploying the agent?
-- Is there an audit trail of what the agent acted as?
+Evidence to look for: tool allowlists in agent config, scoped OAuth/API permission grants, CLAUDE.md or AGENTS.md with explicit tool restrictions, human-in-the-loop gate before destructive actions.
 
-Pass condition: Credential is scoped, revocable, and appears in audit logs.
+**PRESENT**: agent has a documented, enforced allowlist; actions outside the list fail at the authorization layer.
+**PARTIAL**: allowlist exists in docs or config but is not enforced at runtime.
+**ABSENT**: agent can call any available tool or API without restriction.
 
-### Row 4 — Action Authorization
+### Row 5: Payment Authority
+Is there a defined spending limit and a freeze mechanism?
 
-*Is there a boundary on what the agent can do?*
+Evidence to look for: per-agent spend cap in the payment provider, ability to freeze the agent's payment instrument without affecting others, audit log of agent-initiated charges.
 
-Questions to answer:
-- Does the agent have write access to any external system? (databases, APIs, file systems, queues)
-- Is every write action gated by an explicit allow-list, or does the agent decide at runtime?
-- Can the agent grant itself new permissions?
+**PRESENT**: agent has a per-agent spending cap; a one-step freeze stops all charges.
+**PARTIAL**: global account limit exists but is shared across agents; no per-agent freeze.
+**ABSENT**: agent has access to a payment method with no programmatic limit or freeze path.
 
-Pass condition: Writes are gated by an explicit allow-list defined outside the agent's own context.
+*If the agent cannot spend money, mark this row N/A.*
 
-### Row 5 — Payment Authority
+### Row 6: Observability
+Can a human reconstruct what the agent did, when, and why after the fact?
 
-*If the agent can spend money, is there a cap it cannot exceed?*
+Evidence to look for: structured log of every tool call with timestamp and input/output, cost tracking per run, trace ID that links a multi-step agent run into one unit.
 
-Questions to answer:
-- Can the agent initiate any financial transaction, issue an API call that incurs cost, or trigger a billing event?
-- Is there a spend cap enforced at the payment layer (not just in the prompt)?
-- Who authorized the spend cap, and how is it adjusted?
+**PRESENT**: every tool call is logged with timestamp, input, output, and run trace ID; logs are queryable.
+**PARTIAL**: some logging exists but inputs/outputs are redacted, trace IDs are missing, or logs are unstructured.
+**ABSENT**: only success/failure status is logged; no way to audit what the agent actually did.
 
-Pass condition: If no spend authority → row passes automatically. If spend authority → a hard cap exists at the payment layer and has been tested.
+### Row 7: Kill Switch
+If the agent goes wrong, can it be stopped across all 5 sub-layers simultaneously?
 
-### Row 6 — Observability
+Evaluate each sub-layer:
+- **Runtime cancel**: execution can be stopped mid-run (same as Row 1)
+- **Credential revocation**: the agent's identity (Row 3) can be revoked, making further API calls fail
+- **Gateway block**: tool calls can be blocked at the gateway layer (MCP server, API gateway, firewall rule)
+- **Payment freeze**: the agent's payment instrument can be frozen (Row 5, or N/A)
+- **Workflow interrupt**: if the agent uses a workflow framework (LangGraph, Temporal, etc.), the in-progress workflow can be stopped via that framework's API
 
-*Can you answer "what did the agent do and why" after the fact?*
+**PRESENT**: at least 4 of 5 sub-layers have a documented, one-step kill path.
+**PARTIAL**: 2-3 sub-layers have kill paths; the others require multi-step manual intervention.
+**ABSENT**: fewer than 2 sub-layers have a documented kill path.
 
-Questions to answer:
-- Are the agent's tool calls, inputs, and outputs logged?
-- Are logs queryable (not just tailed in real time)?
-- Is there a cost-per-run metric visible somewhere?
-- Can you reconstruct a specific run's decision chain?
+## Phase 3: First-Failure Identification
 
-Pass condition: Logs exist, are queryable, and include enough context to reconstruct decisions.
+Scan the rows in order. Report the **first** row that is ABSENT or PARTIAL as the primary failure point.
 
-### Row 7 — Kill Switch
+If multiple rows are ABSENT, report the lowest-numbered one as the blocking failure and list the others as secondary.
 
-*Can you stop the agent across all 5 layers simultaneously?*
-
-The kill switch must work at all 5 layers — stopping only at the runtime layer leaves the other 4 active:
-
-| Layer | Kill Action |
-|---|---|
-| 1. Runtime | Cancel/pause the running process or job |
-| 2. Credential | Revoke the identity credential |
-| 3. Gateway | Block tool-call routing (deny-list the agent's client ID) |
-| 4. Payment | Freeze or revoke payment instrument or spend cap |
-| 5. Workflow | Interrupt the orchestration graph (if an orchestrator is present) |
-
-Pass condition: Each layer has a named person and a named mechanism. "I would email the team" is not a mechanism.
-
-## Output Format
+## Phase 4: Report
 
 ```
-CONTROL MAP — [Agent / Workflow Name]
-Assessed: [date]
+## Control Map: [Agent/Workflow Name]
+Date: [date]
 
-| Row | Name | Status | Gap / Note |
-|-----|------|--------|------------|
-| 1 | Runtime | PASS / FAIL / PARTIAL | [detail] |
-| 2 | Governed Data | PASS / FAIL / PARTIAL | [detail] |
-| 3 | Identity | PASS / FAIL / PARTIAL | [detail] |
-| 4 | Action Authorization | PASS / FAIL / PARTIAL | [detail] |
-| 5 | Payment Authority | PASS / FAIL / N/A | [detail] |
-| 6 | Observability | PASS / FAIL / PARTIAL | [detail] |
-| 7 | Kill Switch | PASS / FAIL / PARTIAL | [detail] |
+| Row | Name | Status | Evidence |
+|-----|------|--------|----------|
+| 1 | Runtime | PRESENT/PARTIAL/ABSENT | [one-line evidence] |
+| 2 | Governed Data | ... | ... |
+| 3 | Identity/Principal | ... | ... |
+| 4 | Action Authorization | ... | ... |
+| 5 | Payment Authority | ... / N/A | ... |
+| 6 | Observability | ... | ... |
+| 7 | Kill Switch | ... | ... |
 
-BLOCKING GAP: Row [N] — [name]
-REMEDIATION: [concrete next action, not a suggestion]
+### First Failure: Row [N] - [Row Name]
+[One sentence on why this row fails and what the production consequence is.]
 
-SHIP VERDICT: READY / NOT READY — [one-sentence reason]
+### Remediation (ordered by impact)
+1. **Row [N] - [Row Name]**: [Specific action - tool, config setting, or architectural change.]
+2. [Next failing row...]
+
+### Ready to Ship?
+YES - all rows PRESENT (or N/A where applicable).
+NO - fix Row [N] before deploying to production.
 ```
+
+## Phase 5: Follow-up Offers
+
+After delivering the report, offer:
+- "Want a kill-switch audit? I can verify each of the 5 kill-switch sub-layers in detail." (run `/kill-switch-audit`)
+- "Want to pressure-test your vendor choices against the same 7 rows?" (run `/vendor-pressure-test`)
 
 ## Verification
 
-A complete assessment:
-- Answers all 7 rows, not just the obvious ones
-- Does not accept "yes we have logging" — asks where and whether it is queryable
-- Does not accept "we can always restart it" as a kill switch — requires all 5 layers
-- Produces a SHIP VERDICT with a concrete READY or NOT READY decision
+A good control-map pass:
+- Evaluates every row with no skipping
+- Uses PRESENT/PARTIAL/ABSENT consistently
+- Cites specific evidence for each row, not generic statements
+- Identifies exactly one primary failure point (the lowest-numbered failing row)
+- Produces at least one concrete, actionable remediation per failing row
 
-## Source Attribution
+## Source
 
-Technique derived from Nate's Newsletter (2026-05-20): "Seven questions decide whether your AI agent ships. Most teams can answer two." — the Control-Map Fill-In idea (#1), grounded in the 7-row control-layer framework for agent infrastructure readiness.
+Extracted from Nate's Newsletter (natesnewsletter@substack.com), captured 2026-05-20.
+Article: "Seven questions decide whether your AI agent ships. Most teams can answer two."
+URL: https://natesnewsletter.substack.com/p/agent-infrastructure-control-layer
+Technique: 7-row control map for agent production readiness.
