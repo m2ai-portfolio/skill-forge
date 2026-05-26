@@ -3,13 +3,19 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-05-18"
-total_skills: 46
+generated_at: "2026-05-26"
+total_skills: 62
 by_status:
-  active: 17
-  draft: 29
+  active: 18
+  draft: 44
 
 skills:
+  - name: action-outcome-postmortem
+    version: "1.0.0"
+    status: draft
+    domain: agent-operations
+    health_score: null
+
   - name: agent-commerce-mcp-spec
     version: "1.0.0"
     status: draft
@@ -38,6 +44,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-architecture
+    health_score: null
+
+  - name: agent-system-touch-map
+    version: "1.0.0"
+    status: draft
+    domain: procurement
     health_score: null
 
   - name: agents-md-generator
@@ -100,10 +112,22 @@ skills:
     domain: developer-tooling
     health_score: 17.7
 
+  - name: claude-memory-architect
+    version: "1.0.0"
+    status: draft
+    domain: developer-productivity
+    health_score: null
+
   - name: code-review-memory
     version: "1.0.0"
     status: draft
     domain: code-review
+    health_score: null
+
+  - name: context-cost-line-item-analyzer
+    version: "1.0.0"
+    status: draft
+    domain: developer-productivity
     health_score: null
 
   - name: context-fork-guide
@@ -118,11 +142,23 @@ skills:
     domain: context-management
     health_score: 47.0
 
+  - name: control-map
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
+    health_score: null
+
   - name: counterargument-stress-test
     version: "1.0.0"
     status: active
     domain: strategic-analysis
     health_score: 50.0
+
+  - name: cross-runtime-skill-converter
+    version: "1.0.0"
+    status: draft
+    domain: skill-management
+    health_score: null
 
   - name: decomposition-scorer
     version: "1.0.0"
@@ -147,6 +183,12 @@ skills:
     status: active
     domain: code-quality
     health_score: 49.0
+
+  - name: fair-agent-license-rubric
+    version: "1.0.0"
+    status: draft
+    domain: procurement
+    health_score: null
 
   - name: geopolitical-signal-enricher
     version: "1.0.0"
@@ -176,6 +218,18 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-architecture
+    health_score: null
+
+  - name: kill-switch-audit
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
+    health_score: null
+
+  - name: launch-filter
+    version: "1.0.0"
+    status: active
+    domain: agent-evaluation
     health_score: null
 
   - name: make-anticipatory
@@ -208,6 +262,18 @@ skills:
     domain: security
     health_score: 18.3
 
+  - name: plan-stop-hook
+    version: "1.0.0"
+    status: draft
+    domain: developer-productivity
+    health_score: null
+
+  - name: poly-skill
+    version: "1.0.0"
+    status: draft
+    domain: skill-engineering
+    health_score: null
+
   - name: provider-availability-scout
     version: "1.0.0"
     status: draft
@@ -225,6 +291,18 @@ skills:
     status: active
     domain: deployment
     health_score: 17.3
+
+  - name: renewal-interrogation
+    version: "1.0.0"
+    status: draft
+    domain: procurement
+    health_score: null
+
+  - name: semantic-score
+    version: "1.0.0"
+    status: draft
+    domain: ai-evaluation
+    health_score: null
 
   - name: session-work-log
     version: "1.0.0"
@@ -244,16 +322,34 @@ skills:
     domain: productivity
     health_score: null
 
+  - name: thesis-cluster-detector
+    version: "1.0.0"
+    status: draft
+    domain: market-intelligence
+    health_score: null
+
   - name: token-burn-auditor
     version: "1.0.0"
     status: draft
     domain: developer-productivity
     health_score: null
 
+  - name: tool-audit
+    version: "1.0.0"
+    status: draft
+    domain: ai-evaluation
+    health_score: null
+
   - name: tool-migration-brief
     version: "1.0.0"
     status: draft
     domain: strategic-analysis
+    health_score: null
+
+  - name: vendor-pressure-test
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
     health_score: null
 
   - name: video-to-skill
