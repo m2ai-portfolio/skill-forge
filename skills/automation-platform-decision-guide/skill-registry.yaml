@@ -1,7 +1,7 @@
-name: workflow-fit-scorer
+name: automation-platform-decision-guide
 version: "1.0.0"
 status: draft
-created: "2026-04-29"
+created: "2026-04-28"
 last_reviewed: null
 sync_hash: null
 
@@ -12,8 +12,8 @@ source:
   date: "2026-04-27"
 
 taxonomy:
-  domain: agent-architecture
-  complexity: beginner
+  domain: strategic-analysis
+  complexity: intermediate
 
 metrics:
   invocations_30d: 0
@@ -32,5 +32,4 @@ lineage:
   derived_from: null
   changelog: []
 
-dependencies:
-  - build-spec-generator  # natural next step after BUILD verdict
+dependencies: []
