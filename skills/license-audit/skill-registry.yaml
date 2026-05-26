@@ -1,18 +1,18 @@
-name: workflow-fit-scorer
+name: license-audit
 version: "1.0.0"
 status: draft
-created: "2026-04-29"
+created: "2026-04-30"
 last_reviewed: null
 sync_hash: null
 
 source:
   type: newsletter
-  url: "https://natesnewsletter.substack.com/p/your-team-spends-5-hours-a-week-on"
+  url: "https://natesnewsletter.substack.com/p/the-5-question-filter-i-run-every"
   author: "Nate Kadlac"
-  date: "2026-04-27"
+  date: "2026-04-29"
 
 taxonomy:
-  domain: agent-architecture
+  domain: productivity
   complexity: beginner
 
 metrics:
@@ -32,5 +32,4 @@ lineage:
   derived_from: null
   changelog: []
 
-dependencies:
-  - build-spec-generator  # natural next step after BUILD verdict
+dependencies: []
