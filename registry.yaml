@@ -3,13 +3,19 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-05-26"
-total_skills: 62
+generated_at: "2026-05-27"
+total_skills: 93
 by_status:
-  active: 18
-  draft: 44
+  active: 19
+  draft: 74
 
 skills:
+  - name: action-class-policy
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
+    health_score: null
+
   - name: action-outcome-postmortem
     version: "1.0.0"
     status: draft
@@ -20,6 +26,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-commerce
+    health_score: null
+
+  - name: agent-commerce-scaffold
+    version: "1.0.0"
+    status: draft
+    domain: agentic-commerce
     health_score: null
 
   - name: agent-cost-model
@@ -40,6 +52,12 @@ skills:
     domain: code-quality
     health_score: 18.3
 
+  - name: agent-sdk-layer-stack
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: 0.0
+
   - name: agent-standup
     version: "1.0.0"
     status: draft
@@ -52,11 +70,23 @@ skills:
     domain: procurement
     health_score: null
 
+  - name: agentify-docs
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
+    health_score: null
+
   - name: agents-md-generator
     version: "1.0.0"
     status: active
     domain: developer-tooling
     health_score: 18.3
+
+  - name: ai-cost-exposure-audit
+    version: "1.0.0"
+    status: draft
+    domain: strategic-analysis
+    health_score: null
 
   - name: anticipation-gap-audit
     version: "1.0.0"
@@ -64,10 +94,22 @@ skills:
     domain: agent-evaluation
     health_score: 50.0
 
+  - name: api-breaking-change-scanner
+    version: "1.0.0"
+    status: draft
+    domain: developer-tooling
+    health_score: 0.0
+
   - name: artifact-contract-validator
     version: "1.0.0"
     status: draft
     domain: code-quality
+    health_score: null
+
+  - name: automation-platform-decision-guide
+    version: "1.0.0"
+    status: draft
+    domain: strategic-analysis
     health_score: null
 
   - name: boot-tax-monitor
@@ -88,6 +130,12 @@ skills:
     domain: agent-architecture
     health_score: null
 
+  - name: buyer-questions
+    version: "1.0.0"
+    status: draft
+    domain: sales-enablement
+    health_score: null
+
   - name: calendar-hygiene
     version: "1.0.0"
     status: draft
@@ -106,11 +154,29 @@ skills:
     domain: agent-architecture
     health_score: 18.7
 
+  - name: classify-loop
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
+    health_score: null
+
   - name: claude-architect-audit
     version: "1.0.0"
     status: active
     domain: developer-tooling
     health_score: 17.7
+
+  - name: claude-code-memory-architect
+    version: "1.0.0"
+    status: draft
+    domain: memory-systems
+    health_score: null
+
+  - name: claude-design-to-code
+    version: "1.0.0"
+    status: draft
+    domain: frontend-design
+    health_score: 0.0
 
   - name: claude-memory-architect
     version: "1.0.0"
@@ -118,10 +184,22 @@ skills:
     domain: developer-productivity
     health_score: null
 
+  - name: claudex-plan
+    version: "1.0.0"
+    status: draft
+    domain: planning
+    health_score: null
+
   - name: code-review-memory
     version: "1.0.0"
     status: draft
     domain: code-review
+    health_score: null
+
+  - name: compute-availability-tracker
+    version: "1.0.0"
+    status: draft
+    domain: developer-tooling
     health_score: null
 
   - name: context-cost-line-item-analyzer
@@ -154,10 +232,22 @@ skills:
     domain: strategic-analysis
     health_score: 50.0
 
+  - name: cross-model-peer-review
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: 0.0
+
   - name: cross-runtime-skill-converter
     version: "1.0.0"
     status: draft
     domain: skill-management
+    health_score: null
+
+  - name: data-fabric-fit-assessor
+    version: "1.0.0"
+    status: draft
+    domain: strategic-analysis
     health_score: null
 
   - name: decomposition-scorer
@@ -178,6 +268,12 @@ skills:
     domain: strategic-analysis
     health_score: 50.0
 
+  - name: failure-mode-tool-router
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: null
+
   - name: failure-postmortem
     version: "1.0.0"
     status: active
@@ -196,10 +292,34 @@ skills:
     domain: strategic-analysis
     health_score: 50.0
 
+  - name: goal-os-optimize
+    version: "1.0.0"
+    status: draft
+    domain: agentic-os
+    health_score: null
+
+  - name: hallucination-audit-trail
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: 0.0
+
+  - name: hive-mind-shared-context
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: 0.0
+
   - name: image-to-implementation
     version: "1.0.0"
     status: draft
     domain: developer-tooling
+    health_score: null
+
+  - name: impl-arch-audit
+    version: "1.0.0"
+    status: draft
+    domain: enterprise-ai
     health_score: null
 
   - name: inbox-load-audit
@@ -207,6 +327,18 @@ skills:
     status: draft
     domain: tool-management
     health_score: 50.0
+
+  - name: inference-layer-ownership-auditor
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: null
+
+  - name: inference-vendor-lock-in-scorer
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: null
 
   - name: judgment-gate
     version: "1.0.0"
@@ -232,6 +364,12 @@ skills:
     domain: agent-evaluation
     health_score: null
 
+  - name: license-audit
+    version: "1.0.0"
+    status: draft
+    domain: productivity
+    health_score: null
+
   - name: make-anticipatory
     version: "1.0.0"
     status: draft
@@ -244,16 +382,40 @@ skills:
     domain: mcp-tooling
     health_score: null
 
+  - name: memory-fingerprint-architect
+    version: "1.0.0"
+    status: draft
+    domain: memory-systems
+    health_score: 0.0
+
+  - name: memory-system-assembler
+    version: "1.0.0"
+    status: draft
+    domain: context-management
+    health_score: 0.0
+
   - name: mismatch-check
     version: "1.0.0"
     status: active
     domain: agent-architecture
     health_score: 18.7
 
+  - name: model-migration-preflight
+    version: "1.0.0"
+    status: draft
+    domain: developer-tooling
+    health_score: 0.0
+
   - name: model-router
     version: "1.0.0"
     status: draft
     domain: agent-architecture
+    health_score: null
+
+  - name: multi-artifact-work-package
+    version: "1.0.0"
+    status: draft
+    domain: deliverable-production
     health_score: null
 
   - name: nemoclaw-policy-gen
@@ -296,6 +458,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: procurement
+    health_score: null
+
+  - name: scheduled-agent-harness
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
     health_score: null
 
   - name: semantic-score
@@ -346,6 +514,12 @@ skills:
     domain: strategic-analysis
     health_score: null
 
+  - name: validated-data-migration
+    version: "1.0.0"
+    status: draft
+    domain: data-migration
+    health_score: null
+
   - name: vendor-pressure-test
     version: "1.0.0"
     status: draft
@@ -381,4 +555,16 @@ skills:
     status: draft
     domain: ai-strategy
     health_score: null
+
+  - name: workflow-tier-classifier
+    version: "1.0.0"
+    status: draft
+    domain: enterprise-ai
+    health_score: null
+
+  - name: world-model-readiness-diagnostic
+    version: "1.0.0"
+    status: active
+    domain: strategic-analysis
+    health_score: 0.0
 
