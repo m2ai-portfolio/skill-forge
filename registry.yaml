@@ -3,10 +3,10 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-05-27"
-total_skills: 93
+generated_at: "2026-05-29"
+total_skills: 94
 by_status:
-  active: 19
+  active: 20
   draft: 74
 
 skills:
@@ -464,6 +464,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-architecture
+    health_score: null
+
+  - name: self-healing-pipeline
+    version: "1.1.0"
+    status: active
+    domain: build-automation
     health_score: null
 
   - name: semantic-score

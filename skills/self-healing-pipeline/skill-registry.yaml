@@ -1,0 +1,37 @@
+name: self-healing-pipeline
+version: "1.1.0"
+status: active
+created: null
+last_reviewed: "2026-05-29"
+sync_hash: 664999c5e5439f9d01308c1e250fe35c4bace6429863b29c4a6657a679c0c667
+
+source:
+  type: internal-tool
+  url: null
+  author: "ST Metro / Metroplex"
+  date: null
+
+taxonomy:
+  domain: build-automation
+  complexity: advanced
+
+metrics:
+  invocations_30d: 0
+  last_invoked: null
+  manual_rating: null
+  health_score: null
+
+learning:
+  total_patches_applied: 0
+  total_patches_proposed: 0
+  last_patch_at: null
+  effectiveness_score: null
+
+lineage:
+  parent_version: null
+  derived_from: null
+  changelog:
+    - "1.1.0 (2026-05-29): add Stage 1A.6 first-pass SAFETY contract + verification/calibration edits (S3, closes the Judge-vs-Ravage gap; onboarded to skill-forge for version control)."
+
+dependencies:
+  - self-healing-daemon
