@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-05-31"
-total_skills: 101
+total_skills: 105
 by_status:
-  active: 19
-  draft: 82
+  active: 20
+  draft: 85
 
 skills:
   - name: action-class-policy
@@ -274,6 +274,12 @@ skills:
     domain: agent-architecture
     health_score: 18.7
 
+  - name: demotion-audit
+    version: "1.0.0"
+    status: draft
+    domain: tool-governance
+    health_score: null
+
   - name: describability-gate
     version: "1.0.0"
     status: draft
@@ -284,6 +290,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-safety
+    health_score: null
+
+  - name: dynamic-workflow-orchestration
+    version: "1.0.0"
+    status: draft
+    domain: multi-agent-orchestration
     health_score: null
 
   - name: executive-briefing
@@ -466,6 +478,12 @@ skills:
     domain: document-quality
     health_score: 0.0
 
+  - name: prototype-classifier
+    version: "1.0.0"
+    status: draft
+    domain: tool-governance
+    health_score: null
+
   - name: provider-availability-scout
     version: "1.0.0"
     status: draft
@@ -494,6 +512,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-architecture
+    health_score: null
+
+  - name: self-healing-pipeline
+    version: "1.1.0"
+    status: active
+    domain: build-automation
     health_score: null
 
   - name: semantic-score
