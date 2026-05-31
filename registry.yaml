@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-05-29"
-total_skills: 97
+generated_at: "2026-05-31"
+total_skills: 100
 by_status:
   active: 19
-  draft: 78
+  draft: 81
 
 skills:
   - name: action-class-policy
@@ -460,6 +460,12 @@ skills:
     domain: skill-engineering
     health_score: null
 
+  - name: pretty-but-wrong
+    version: "1.0.0"
+    status: draft
+    domain: document-quality
+    health_score: 0.0
+
   - name: provider-availability-scout
     version: "1.0.0"
     status: draft
@@ -501,6 +507,12 @@ skills:
     status: draft
     domain: agent-handoff
     health_score: null
+
+  - name: source-packet
+    version: "1.0.0"
+    status: draft
+    domain: document-quality
+    health_score: 0.0
 
   - name: spec-gap-detector
     version: "1.0.0"
@@ -561,6 +573,12 @@ skills:
     status: draft
     domain: content-creation
     health_score: 19.0
+
+  - name: workbook-doctor
+    version: "1.0.0"
+    status: draft
+    domain: document-quality
+    health_score: 0.0
 
   - name: workflow-decomposer
     version: "1.0.0"
