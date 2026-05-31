@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-05-31"
-total_skills: 100
+total_skills: 101
 by_status:
   active: 19
-  draft: 81
+  draft: 82
 
 skills:
   - name: action-class-policy
@@ -548,6 +548,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: strategic-analysis
+    health_score: null
+
+  - name: trust-score
+    version: "1.0.0"
+    status: draft
+    domain: quality-assurance
     health_score: null
 
   - name: validated-data-migration
