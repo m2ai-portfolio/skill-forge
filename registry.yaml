@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-05-29"
-total_skills: 94
+generated_at: "2026-05-31"
+total_skills: 105
 by_status:
   active: 20
-  draft: 74
+  draft: 85
 
 skills:
   - name: action-class-policy
@@ -34,6 +34,12 @@ skills:
     domain: agentic-commerce
     health_score: null
 
+  - name: agent-correction-capture
+    version: "1.0.0"
+    status: draft
+    domain: agent-observability
+    health_score: null
+
   - name: agent-cost-model
     version: "1.0.0"
     status: active
@@ -51,6 +57,12 @@ skills:
     status: active
     domain: code-quality
     health_score: 18.3
+
+  - name: agent-run-schema
+    version: "1.0.0"
+    status: draft
+    domain: agent-observability
+    health_score: null
 
   - name: agent-sdk-layer-stack
     version: "1.0.0"
@@ -196,6 +208,12 @@ skills:
     domain: code-review
     health_score: null
 
+  - name: completion-vs-acceptance
+    version: "1.0.0"
+    status: draft
+    domain: agent-observability
+    health_score: null
+
   - name: compute-availability-tracker
     version: "1.0.0"
     status: draft
@@ -256,10 +274,28 @@ skills:
     domain: agent-architecture
     health_score: 18.7
 
+  - name: demotion-audit
+    version: "1.0.0"
+    status: draft
+    domain: tool-governance
+    health_score: null
+
   - name: describability-gate
     version: "1.0.0"
     status: draft
     domain: ai-strategy
+    health_score: null
+
+  - name: destructive-op-guard
+    version: "1.0.0"
+    status: draft
+    domain: agent-safety
+    health_score: null
+
+  - name: dynamic-workflow-orchestration
+    version: "1.0.0"
+    status: draft
+    domain: multi-agent-orchestration
     health_score: null
 
   - name: executive-briefing
@@ -436,6 +472,18 @@ skills:
     domain: skill-engineering
     health_score: null
 
+  - name: pretty-but-wrong
+    version: "1.0.0"
+    status: draft
+    domain: document-quality
+    health_score: 0.0
+
+  - name: prototype-classifier
+    version: "1.0.0"
+    status: draft
+    domain: tool-governance
+    health_score: null
+
   - name: provider-availability-scout
     version: "1.0.0"
     status: draft
@@ -484,6 +532,12 @@ skills:
     domain: agent-handoff
     health_score: null
 
+  - name: source-packet
+    version: "1.0.0"
+    status: draft
+    domain: document-quality
+    health_score: 0.0
+
   - name: spec-gap-detector
     version: "1.0.0"
     status: active
@@ -520,6 +574,12 @@ skills:
     domain: strategic-analysis
     health_score: null
 
+  - name: trust-score
+    version: "1.0.0"
+    status: draft
+    domain: quality-assurance
+    health_score: null
+
   - name: validated-data-migration
     version: "1.0.0"
     status: draft
@@ -543,6 +603,12 @@ skills:
     status: draft
     domain: content-creation
     health_score: 19.0
+
+  - name: workbook-doctor
+    version: "1.0.0"
+    status: draft
+    domain: document-quality
+    health_score: 0.0
 
   - name: workflow-decomposer
     version: "1.0.0"
