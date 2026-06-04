@@ -1,140 +1,138 @@
 ---
 name: failure-mode-splitter
-description: Before accepting any agentic deliverable, decompose it into four risk buckets — source/provenance, visual/quality, operational/conflict, and review/status — and generate a targeted second-pass action for each. Trigger: "split failure modes", "pre-acceptance review", "bucket this deliverable", "what could go wrong with this output", "failure-mode-splitter".
+description: Before accepting a complex agentic deliverable, decompose it into four risk buckets — source, visual, operational, and review — then prescribe the specific QA action each bucket needs. Prevents accepting output that looks done but fails silently in one dimension. Use when an agentic task has produced a multi-part deliverable and you need to decide what to check before signing off.
 ---
 
 # Failure-Mode Splitter
 
-Before accepting an agentic deliverable — a report, a migration, a content packet, a code artifact — decompose it into four orthogonal risk buckets. Each bucket has its own failure profile, so a single all-in-one QA pass misses failures that only show up under the right lens. This skill generates a per-bucket risk list and a specific remediation or second-pass action for each.
+Takes a completed agentic deliverable and decomposes it into four independent risk buckets. Each bucket maps to a different type of failure mode and requires a different QA pass. The output is a per-bucket risk list and a concrete next action — not a single pass/fail verdict.
 
-## When to Use
+## Trigger
 
-- You've received output from an agent and need to decide whether to accept it before acting, shipping, or forwarding.
-- The deliverable has multiple dimensions of quality (factual accuracy AND visual presentation AND operational completeness).
-- You want a structured pre-acceptance checklist rather than ad-hoc review.
-- You're routing the deliverable to a specialist model or a human reviewer and need to brief them efficiently.
+Use when the user says "/failure-mode-splitter", "check this deliverable before I accept it", "pre-acceptance check", "split this by failure mode", "what could still be wrong with this output", or when an agent has produced a complex deliverable (report, analysis, document, data set, code) that needs structured QA before acceptance.
 
-Do NOT use for simple, single-dimension outputs (e.g., a one-line code fix). The overhead isn't justified.
+## Why This Exists
+
+Agentic deliverables fail in at least four distinct ways that don't always co-occur:
+- A deliverable can have perfect citations but broken visual layout
+- A report can have correct facts but miss operational constraints ("do not email vendors before legal review")
+- Content can be visually polished but contain fabricated sources
+- Work can be technically complete but blocked from being final because a section requires human sign-off
+
+Checking everything in one pass with one model misses failures that require a different evaluator. This skill forces explicit separation before acceptance.
 
 ## Phase 1: Intake
 
-Ask the user to describe or paste the deliverable. Collect:
+Collect from the user:
+1. **Deliverable description** -- what did the agent produce? One paragraph.
+2. **Original task** -- what was the agent asked to do?
+3. **Stakes** -- what breaks if this deliverable is wrong?
 
-1. **Deliverable type** — what kind of artifact is it? (report, code, data migration, marketing packet, diagram, etc.)
-2. **Intended audience or next step** — who receives it or what happens to it next?
-3. **Source material** — was the deliverable produced from specific documents, a database, external URLs, or purely from the model's knowledge?
+If the deliverable is a file or document, ask for its path or paste its contents.
 
-If the user provides a file path or URL, read or fetch the content before proceeding.
+## Phase 2: Decompose Into Four Risk Buckets
 
-## Phase 2: Classify Into Four Buckets
+Evaluate the deliverable against each bucket. For every bucket, list specific risks present in this deliverable -- do not list generic risks that don't apply.
 
-For each bucket, identify 2–5 concrete risks present in THIS deliverable based on its type and content. Do not generate generic risks — anchor each item to something observable in the artifact.
+### Bucket 1: Source (Provenance and Citation)
 
-### Bucket 1 — Source / Provenance
+**Failure mode**: The deliverable references facts, numbers, or claims that cannot be traced to a real source -- fabricated citations, paraphrased-but-unattributed content, or URLs that don't exist.
 
-**What fails here**: Citations are missing, invented, or untraceable. Source IDs are stripped. Claims reference "the data" without a pointer to which data. Hallucinated statistics.
+**What to check**:
+- Every factual claim: is there a traceable source?
+- Every citation or URL: does it resolve to a real document?
+- Every statistic: does it match the cited source?
 
-**Questions to ask**:
-- Does every factual claim have a traceable source path (URL, file, row ID)?
-- Are all sources cited present in the input context, or are some inferred from training data?
-- Would a reviewer be able to verify each key claim in under 2 minutes?
+**QA action**: Assign a source-grounded model or human to spot-check a random sample of claims against the cited documents. Flag any claim without a verifiable source.
 
-**Second-pass action**: Run a source-discipline model pass — feed the deliverable alongside the original source material and ask specifically: "Flag every factual claim not traceable to the provided sources."
+### Bucket 2: Visual (Presentation and Artifact Quality)
 
----
+**Failure mode**: The deliverable has correct substance but broken, misleading, or low-quality presentation -- layout errors, misaligned diagrams, charts that don't match the data, or formatting that obscures meaning.
 
-### Bucket 2 — Visual / Presentation Quality
+**What to check** (skip if deliverable is code or data with no visual component):
+- Does every chart, diagram, or table render correctly?
+- Does the visual presentation match the underlying data or argument?
+- Are there layout breaks, truncated sections, or misaligned elements?
 
-**What fails here**: Structure is wrong for the audience. Diagrams are inaccurate. Formatting is inconsistent. The content is correct but will be rejected or misread because of how it looks.
+**QA action**: Render the output in its intended format and do a visual review. A visual-capable model or human reviewer is better suited than a text-only model for this bucket.
 
-**Questions to ask**:
-- Is the visual hierarchy appropriate for the intended audience?
-- Do any diagrams, tables, or charts misrepresent the underlying data?
-- Are there formatting inconsistencies that signal low quality to the reader?
+### Bucket 3: Operational (Constraints and Conflict Detection)
 
-**Second-pass action**: Run a design-pass or ask a model optimized for presentation quality to review layout and structure separately from factual accuracy.
+**Failure mode**: The deliverable proposes or describes actions that violate known constraints -- legal, organizational, technical, or process constraints that the agent did not know about or ignored.
 
----
+**What to check**:
+- Does the output recommend any action that is restricted, risky, or explicitly prohibited?
+- Are there conflicts with other ongoing work, policies, or dependencies?
+- Are review queues or escalation paths surfaced (not smoothed over)?
 
-### Bucket 3 — Operational / Conflict
+**QA action**: Have a human or a model with full constraint context review the action items and recommendations. Surface conflicts explicitly -- do not accept "TBD" or "to be confirmed" as a substitute for a real constraint check.
 
-**What fails here**: The deliverable recommends an action that conflicts with a constraint, policy, or prior decision. It omits a "do not do X" that should be in scope. Review queues that should have been populated weren't. Edge cases are smoothed over instead of surfaced.
+### Bucket 4: Review State (Final vs Reviewable vs Blocked)
 
-**Questions to ask**:
-- Does the deliverable surface constraints or blockers, or silently paper over them?
-- Are any recommended actions in conflict with known policies, dependencies, or prior decisions?
-- Is there a review queue — a set of items needing human judgment — and has it been explicitly populated rather than resolved by assumption?
+**Failure mode**: The deliverable presents all content as equally final when parts of it require human sign-off, are provisional, or depend on blocked information.
 
-**Second-pass action**: Route to a human reviewer or a constraints-aware model pass: "Here is the deliverable and here are the hard constraints. Flag any action or recommendation that violates a constraint or requires a human decision before execution."
+**What to check**:
+- Which sections or items are truly final?
+- Which require human review or approval before use?
+- Which are blocked on missing information and should not be used?
 
----
-
-### Bucket 4 — Review / Status Classification
-
-**What fails here**: It's unclear which parts of the deliverable are final vs. still reviewable vs. blocked. Accepting the whole artifact when only part of it is finalized leads to downstream rework. Blocked items go unnoticed.
-
-**Questions to ask**:
-- Is each section or record clearly labeled as: final, needs-review, or blocked?
-- Are blocked items accompanied by a clear reason and a resolution path?
-- Is there an explicit acceptance criteria — a done condition — for this deliverable?
-
-**Second-pass action**: If the artifact lacks status labels, ask the producing agent to re-emit it with explicit `[FINAL]`, `[REVIEW]`, `[BLOCKED: reason]` tags on each section or record. Do not accept an unlabeled artifact as final.
-
----
+**QA action**: Label every major section or output item as one of: FINAL, REVIEW-REQUIRED, or BLOCKED. Do not mark the deliverable complete until REVIEW-REQUIRED items have been reviewed and BLOCKED items are either resolved or explicitly acknowledged as out of scope.
 
 ## Phase 3: Output
 
-Produce a structured report:
-
 ```
-FAILURE-MODE SPLIT REPORT
-Deliverable: <type + brief description>
-Intended next step: <who receives it / what happens>
+FAILURE-MODE SPLIT
+==================
+Deliverable: {one-line description}
 
-BUCKET 1 — SOURCE / PROVENANCE
-Risks identified:
-  - <specific risk 1>
-  - <specific risk 2>
-Second-pass action: <what to do>
-Severity: [HIGH / MEDIUM / LOW]
+Bucket 1 -- Source
+  Risks found:  {bullet list of specific risks, or NONE}
+  QA action:    {concrete next step}
 
-BUCKET 2 — VISUAL / PRESENTATION
-Risks identified:
-  - <specific risk 1>
-  - <specific risk 2>
-Second-pass action: <what to do>
-Severity: [HIGH / MEDIUM / LOW]
+Bucket 2 -- Visual
+  Risks found:  {bullet list, or SKIP -- no visual component}
+  QA action:    {concrete next step}
 
-BUCKET 3 — OPERATIONAL / CONFLICT
-Risks identified:
-  - <specific risk 1>
-  - <specific risk 2>
-Second-pass action: <what to do>
-Severity: [HIGH / MEDIUM / LOW]
+Bucket 3 -- Operational
+  Risks found:  {bullet list of specific risks, or NONE}
+  QA action:    {concrete next step}
 
-BUCKET 4 — REVIEW / STATUS
-Risks identified:
-  - <specific risk 1>
-  - <specific risk 2>
-Second-pass action: <what to do>
-Severity: [HIGH / MEDIUM / LOW]
+Bucket 4 -- Review State
+  Final:           {list of sections / items that are truly final}
+  Review-required: {list of sections / items needing sign-off}
+  Blocked:         {list of items blocked on missing information}
+  QA action:       {who reviews what before acceptance}
 
-ACCEPTANCE RECOMMENDATION: [ACCEPT / HOLD — resolve bucket N first / REJECT — redeliver]
-Reason: <one sentence>
+Overall verdict:
+  ACCEPT  -- all buckets clear, no REVIEW-REQUIRED or BLOCKED items remain
+  HOLD    -- one or more buckets have open risks requiring QA before acceptance
+  REJECT  -- a bucket failure is severe enough to require the agent to redo the work
 ```
 
-If any bucket has severity HIGH and no action has been taken on it, the recommendation must be HOLD or REJECT — never ACCEPT.
+## Phase 4: Route to the Right Reviewer
 
-## Common Pitfalls
+After splitting, assign each bucket to the appropriate reviewer:
 
-- **Don't collapse buckets.** Each bucket captures a distinct failure mode. Merging source and visual into "quality" causes the operational/conflict bucket to get dropped.
-- **Anchor risks to the artifact.** Generic risks ("the model might hallucinate") are not actionable. Name what you actually see.
-- **Severity drives the gate.** A LOW-severity source risk with a clear second-pass action can coexist with an ACCEPT recommendation. A HIGH-severity conflict risk cannot.
-- **The producing agent's self-assessment is not a substitute.** Asking the same session that produced the deliverable to rate its own quality is the self-preference bias this skill is designed to bypass.
+| Bucket | Best reviewer |
+|--------|--------------|
+| Source | Source-grounded model or human with access to cited documents |
+| Visual | Visual-capable model or human with rendering context |
+| Operational | Human with knowledge of constraints, or a model briefed on constraints |
+| Review state | Human with authority to sign off or escalate |
+
+Do not route all buckets to the same reviewer unless they genuinely have the context for all four.
+
+## What This Does NOT Do
+
+- Does not re-run the agent or regenerate the deliverable -- it evaluates what exists.
+- Does not replace a full security, legal, or compliance review.
+- Does not apply to deliverables that are purely executable code -- use a testing harness for those.
+- Does not pick the right model for the QA pass -- see a model router skill for that.
 
 ## Source Attribution
 
-Technique: Pre-acceptance risk decomposition into four failure-mode buckets
-Source: Nate's Newsletter (natesnewsletter@substack.com) — "Opus 4.8 scored 81 in my benchmark"
+Technique: Pre-Acceptance Failure-Mode Decomposition into Four Risk Buckets
+Source: Nate's Newsletter (natesnewsletter@substack.com)
 Published: 2026-06-03
-Idea reference: Idea #3 — Failure-Mode Splitter
+Subject: "Opus 4.8 scored 81 in my benchmark. I still wouldn't default to it."
+Idea #3 of 11 -- Failure-Mode Splitter (pre-acceptance risk decomposer)
