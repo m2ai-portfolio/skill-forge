@@ -1,0 +1,67 @@
+name: Haiku skill review
+
+# Auto-reviews and merges the automated forge/* skill PRs so they don't pile up
+# waiting on a manual merge. Claude Haiku checks structure + secrets; if it
+# approves and nothing is flagged, the PR is squash-merged. Anything it can't
+# clear is labelled `needs-human` and left open.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'skills/**'
+
+# Only act on the pipeline's own branches. Human PRs are never auto-merged.
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: haiku-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: startsWith(github.head_ref, 'forge/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need base..HEAD diff
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Anthropic SDK
+        run: pip install anthropic
+
+      - name: Run Haiku review
+        id: review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BASE_REF: ${{ github.base_ref }}
+        run: python .github/scripts/haiku_review.py
+
+      - name: Post review comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr comment "$PR" --body-file review_body.md
+
+      - name: Auto-merge (approved)
+        if: steps.review.outputs.decision == 'approve'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr merge "$PR" --squash --delete-branch
+
+      - name: Flag for human (changes requested)
+        if: steps.review.outputs.decision != 'approve'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh label create needs-human --color FBCA04 \
+            --description "Auto-review could not clear this; needs manual review" 2>/dev/null || true
+          gh pr edit "$PR" --add-label needs-human
