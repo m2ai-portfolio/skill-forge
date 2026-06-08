@@ -1,0 +1,15 @@
+name: agent-first-operating-model
+version: "1.0.0"
+status: draft
+created: "2026-06-08"
+last_reviewed: null
+
+source:
+  type: newsletter
+  url: "https://natesnewsletter.substack.com/p/ai-token-cost-management"
+  author: "Nate Kadlac"
+  date: "2026-06-07"
+
+taxonomy:
+  domain: agent-architecture
+  complexity: advanced
