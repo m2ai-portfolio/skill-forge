@@ -1,0 +1,19 @@
+name: heygen-com-skills
+version: "1.3.2"
+status: cold
+created: "2026-06-14"
+last_reviewed: "2026-06-14"
+
+source:
+  type: upstream-clone
+  url: "https://github.com/heygen-com/skills.git"
+  author: "HeyGen"
+  date: "2026-06-14"
+
+taxonomy:
+  domain: video-generation
+  complexity: intermediate
+
+archive:
+  reason: "Cold-archived 2026-06-14 (token-burn audit Q-20260614-0002). Heygen dedup: kept granular heygen-avatar + heygen-video active in ~/.claude/skills/; this monolithic upstream bundle removed to clear trigger collision. Re-clone from upstream url if a full bundle is needed again."
+  nested_git_dropped: true

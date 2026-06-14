@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+# heygen-skills setup — first-time installation for Claude Code and OpenClaw users.
+# Idempotent: safe to run multiple times.
+set -euo pipefail
+
+# ─── Colors (degrade gracefully) ─────────────────────────────
+if [ -t 1 ] && command -v tput &>/dev/null && [ "$(tput colors 2>/dev/null || echo 0)" -ge 8 ]; then
+  GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) RED=$(tput setaf 1) BOLD=$(tput bold) RESET=$(tput sgr0)
+else
+  GREEN="" YELLOW="" RED="" BOLD="" RESET=""
+fi
+
+ok()   { echo "${GREEN}✓${RESET} $1"; }
+warn() { echo "${YELLOW}!${RESET} $1"; }
+err()  { echo "${RED}✗${RESET} $1"; }
+
+# ─── Locate repo root ────────────────────────────────────────
+SKILL_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ ! -f "$SKILL_DIR/SKILL.md" ]; then
+  err "Cannot find SKILL.md — run this script from the heygen-skills repo root."
+  exit 1
+fi
+
+# ─── Parse flags ────────────────────────────────────────────
+HOST_OVERRIDE=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --host)
+      shift
+      if [ $# -eq 0 ]; then
+        err "--host requires a value: claude or openclaw"
+        exit 1
+      fi
+      case "$1" in
+        claude|claude-code) HOST_OVERRIDE="claude-code" ;;
+        openclaw)           HOST_OVERRIDE="openclaw" ;;
+        *)
+          err "Unknown host agent: $1 (expected: claude or openclaw)"
+          exit 1
+          ;;
+      esac
+      shift
+      ;;
+    --host=*)
+      val="${1#--host=}"
+      case "$val" in
+        claude|claude-code) HOST_OVERRIDE="claude-code" ;;
+        openclaw)           HOST_OVERRIDE="openclaw" ;;
+        *)
+          err "Unknown host agent: $val (expected: claude or openclaw)"
+          exit 1
+          ;;
+      esac
+      shift
+      ;;
+    *)
+      warn "Unknown flag: $1"
+      shift
+      ;;
+  esac
+done
+
+# ─── Detect host agent ───────────────────────────────────────
+# Priority: 1) --host flag, 2) script path, 3) directory existence fallback
+AGENT="unknown"
+SKILLS_DIR=""
+
+if [ -n "$HOST_OVERRIDE" ]; then
+  # Explicit --host flag takes highest priority
+  AGENT="$HOST_OVERRIDE"
+elif [[ "$SKILL_DIR" == *"/.openclaw/workspace/skills/"* ]]; then
+  AGENT="openclaw"
+elif [[ "$SKILL_DIR" == *"/.claude/skills/"* ]]; then
+  AGENT="claude-code"
+elif [ -d "$HOME/.openclaw" ] && [ -d "$HOME/.claude" ]; then
+  # Both installed — path was ambiguous, warn and ask for --host
+  warn "Both Claude Code and OpenClaw detected. Cannot auto-detect host agent."
+  warn "Re-run with: ./setup --host claude  OR  ./setup --host openclaw"
+elif [ -d "$HOME/.claude" ]; then
+  AGENT="claude-code"
+elif [ -d "$HOME/.openclaw" ]; then
+  AGENT="openclaw"
+fi
+
+# Set skills directory based on detected agent
+case "$AGENT" in
+  claude-code) SKILLS_DIR="$HOME/.claude/skills" ;;
+  openclaw)    SKILLS_DIR="$HOME/.openclaw/workspace/skills" ;;
+esac
+
+echo ""
+echo "${BOLD}HeyGen Skills Setup${RESET}"
+echo "─────────────────────────────"
+if [ "$AGENT" = "unknown" ]; then
+  warn "Could not detect Claude Code or OpenClaw. See INSTALL.md for manual setup."
+else
+  ok "Detected host agent: ${BOLD}${AGENT}${RESET}"
+fi
+
+# ─── Create skill symlinks ───────────────────────────────────
+SKILLS=(heygen-avatar heygen-video)
+
+if [ -n "$SKILLS_DIR" ]; then
+  INSTALL_DIR="$SKILLS_DIR/heygen-skills"
+  mkdir -p "$INSTALL_DIR"
+  for skill in "${SKILLS[@]}"; do
+    src="$SKILL_DIR/$skill/SKILL.md"
+    [ ! -f "$src" ] && { warn "Skipping $skill — SKILL.md not found"; continue; }
+    mkdir -p "$INSTALL_DIR/$skill" "$SKILLS_DIR/$skill"
+    ln -sf "$src" "$INSTALL_DIR/$skill/SKILL.md"
+    ln -sf "$src" "$SKILLS_DIR/$skill/SKILL.md"
+  done
+  ln -sf "$SKILL_DIR/SKILL.md" "$INSTALL_DIR/SKILL.md"
+  [ -d "$SKILL_DIR/references" ] && ln -sfn "$SKILL_DIR/references" "$INSTALL_DIR/references"
+  ok "Skill symlinks created in ${SKILLS_DIR}"
+  for skill in "${SKILLS[@]}"; do echo "    ${skill}/SKILL.md"; done
+fi
+
+# ─── Auth guidance ───────────────────────────────────────────
+echo ""
+echo "${BOLD}Auth:${RESET}"
+echo "  The skills prefer HeyGen Remote MCP (OAuth, no API key needed)."
+echo "  If MCP isn't connected, install and use the HeyGen CLI:"
+echo "    ${BOLD}curl -fsSL https://static.heygen.ai/cli/install.sh | bash${RESET}"
+echo "    ${BOLD}heygen auth login${RESET}    # or: export HEYGEN_API_KEY=<your-key>"
+echo "    ${BOLD}heygen auth status${RESET}   # verify"
+
+if command -v heygen &>/dev/null; then
+  HEYGEN_VERSION="$(heygen --version 2>/dev/null | head -n1 || echo 'unknown')"
+  ok "heygen CLI detected: ${HEYGEN_VERSION}"
+  if heygen auth status &>/dev/null; then
+    ok "heygen auth OK"
+  else
+    warn "heygen not authenticated — run: heygen auth login  (or export HEYGEN_API_KEY=<key>)"
+  fi
+else
+  warn "heygen CLI not found on PATH (optional — only needed if MCP isn't connected)"
+fi
+
+# ─── Summary ─────────────────────────────────────────────────
+echo ""
+echo "${BOLD}Installed skills:${RESET}"
+for skill in "${SKILLS[@]}"; do
+  echo "  - $skill"
+done
+
+echo ""
+echo "${BOLD}Next step:${RESET}"
+echo "  Ask your agent: \"Create my HeyGen avatar\""
+echo ""

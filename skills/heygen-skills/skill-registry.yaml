@@ -1,0 +1,19 @@
+name: heygen-skills
+version: "1.0.0"
+status: cold
+created: "2026-06-14"
+last_reviewed: "2026-06-14"
+
+source:
+  type: derived-duplicate
+  url: "https://github.com/heygen-com/skills.git"
+  author: "HeyGen (stripped local copy)"
+  date: "2026-06-14"
+
+taxonomy:
+  domain: video-generation
+  complexity: intermediate
+
+archive:
+  reason: "Cold-archived 2026-06-14 (token-burn audit Q-20260614-0002). Stripped partial copy of the heygen-com/skills monolith (no git/platforms/scripts). Redundant with heygen-com-skills and the granular pair. Kept for library value only."
+  nested_git_dropped: false
