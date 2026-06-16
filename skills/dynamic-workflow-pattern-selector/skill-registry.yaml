@@ -1,0 +1,16 @@
+name: dynamic-workflow-pattern-selector
+version: "1.0"
+source:
+  type: youtube
+  creator: Mark Kashef
+  url: https://www.youtube.com/watch?v=g9b9G8dcS8Y
+  title: "Master All 6 Claude Code Dynamic Workflows"
+  published: "2026-06-03"
+intake_date: "2026-06-03"
+status: draft
+tags:
+  - dynamic-workflows
+  - agent-orchestration
+  - pattern-selection
+  - multi-agent
+  - workflow-design
