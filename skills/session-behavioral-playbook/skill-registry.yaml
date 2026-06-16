@@ -1,0 +1,46 @@
+name: session-behavioral-playbook
+version: "1.0"
+status: draft
+created: "2026-06-16"
+last_reviewed: null
+sync_hash: null
+
+source:
+  type: youtube
+  creator: Mark Kashef
+  url: https://www.youtube.com/watch?v=B95cu7seTm8
+  title: "Make ANY Model Think Like Fable in Minutes"
+  published: "2026-06-14"
+
+intake_date: "2026-06-16"
+
+taxonomy:
+  domain: model-behavior
+  complexity: intermediate
+
+tags:
+  - model-behavior
+  - session-history
+  - behavioral-playbook
+  - fable
+  - jsonl
+  - model-diff
+
+metrics:
+  invocations_30d: 0
+  last_invoked: null
+  manual_rating: null
+  health_score: null
+
+learning:
+  total_patches_applied: 0
+  total_patches_proposed: 0
+  last_patch_at: null
+  effectiveness_score: null
+
+lineage:
+  parent_version: null
+  derived_from: null
+  changelog: []
+
+dependencies: []
