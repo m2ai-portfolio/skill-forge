@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-06-07"
-total_skills: 109
+generated_at: "2026-06-18"
+total_skills: 119
 by_status:
   active: 20
-  draft: 89
+  draft: 99
 
 skills:
   - name: action-class-policy
@@ -50,6 +50,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-infrastructure
+    health_score: null
+
+  - name: agent-maintenance-loop
+    version: "1.0.0"
+    status: draft
+    domain: agent-operations
     health_score: null
 
   - name: agent-readiness-audit
@@ -134,6 +140,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: marketing
+    health_score: null
+
+  - name: browser-automation-qa
+    version: "1.0.0"
+    status: draft
+    domain: quality-assurance
     health_score: null
 
   - name: build-spec-generator
@@ -280,6 +292,12 @@ skills:
     domain: agent-architecture
     health_score: 18.7
 
+  - name: delete-before-you-add
+    version: "1.0.0"
+    status: draft
+    domain: agent-operations
+    health_score: null
+
   - name: demotion-audit
     version: "1.0.0"
     status: draft
@@ -302,6 +320,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: multi-agent-orchestration
+    health_score: null
+
+  - name: dynamic-workflow-pattern-selector
+    version: "1.0"
+    status: draft
+    domain: unknown
     health_score: null
 
   - name: executive-briefing
@@ -382,6 +406,18 @@ skills:
     domain: agent-architecture
     health_score: null
 
+  - name: is-it-real
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
+    health_score: null
+
+  - name: job-sentence-validator
+    version: "1.0.0"
+    status: draft
+    domain: agent-operations
+    health_score: null
+
   - name: judgment-gate
     version: "1.0.0"
     status: draft
@@ -422,6 +458,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: mcp-tooling
+    health_score: null
+
+  - name: meeting-synthesis
+    version: "1.0.0"
+    status: draft
+    domain: productivity
     health_score: null
 
   - name: memory-fingerprint-architect
@@ -544,6 +586,12 @@ skills:
     domain: ai-evaluation
     health_score: null
 
+  - name: session-behavioral-playbook
+    version: "1.0"
+    status: draft
+    domain: model-behavior
+    health_score: null
+
   - name: session-history-model-onboarding
     version: "1.0.0"
     status: draft
@@ -568,10 +616,22 @@ skills:
     domain: code-quality
     health_score: 49.0
 
+  - name: steer-or-dispatch
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
+    health_score: null
+
   - name: stress-test-finder
     version: "1.0.0"
     status: draft
     domain: productivity
+    health_score: null
+
+  - name: testing-runbook-creator
+    version: "1.0.0"
+    status: draft
+    domain: quality-assurance
     health_score: null
 
   - name: thesis-cluster-detector
