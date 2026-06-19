@@ -1,0 +1,11 @@
+name: session-behavioral-distillation
+version: "1.0.0"
+status: draft
+source:
+  type: youtube
+  url: https://www.youtube.com/watch?v=B95cu7seTm8
+  author: Mark Kashef
+  date: "2026-06-14"
+taxonomy:
+  domain: workflow-optimization
+  complexity: medium
