@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-06-22"
-total_skills: 122
+generated_at: "2026-06-25"
+total_skills: 128
 by_status:
   active: 20
-  draft: 102
+  draft: 108
 
 skills:
   - name: action-class-policy
@@ -370,6 +370,24 @@ skills:
     domain: procurement
     health_score: null
 
+  - name: find-your-first-loop
+    version: "1.0.0"
+    status: draft
+    domain: automation-design
+    health_score: null
+
+  - name: find-your-loop-of-loops
+    version: "1.0.0"
+    status: draft
+    domain: automation-design
+    health_score: null
+
+  - name: five-questions-loop-audit
+    version: "1.0.0"
+    status: draft
+    domain: automation-design
+    health_score: null
+
   - name: geopolitical-signal-enricher
     version: "1.0.0"
     status: active
@@ -464,6 +482,24 @@ skills:
     version: "1.0.0"
     status: draft
     domain: productivity
+    health_score: null
+
+  - name: loop-of-loops-mapper
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
+    health_score: null
+
+  - name: loop-quality-audit
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
+    health_score: null
+
+  - name: loop-spec-builder
+    version: "1.0.0"
+    status: draft
+    domain: agent-governance
     health_score: null
 
   - name: make-anticipatory
