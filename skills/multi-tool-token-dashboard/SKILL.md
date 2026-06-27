@@ -1,6 +1,6 @@
 ---
 name: multi-tool-token-dashboard
-description: Build a cross-tool AI token usage dashboard that ingests usage data from multiple providers (Claude, Codex, ChatGPT, etc.) into fidelity lanes (exact/measured/estimated), produces a static site with contribution-grid charts and a 30-day moving average, and drives delegation decisions rather than vanity metrics.
+description: Build a cross-tool AI token-usage dashboard that ingests usage from multiple providers (Claude, Codex, ChatGPT, etc.) into fidelity lanes (exact/measured/estimated) and produces a static site with charts. Use when the user says "build a token dashboard", "track my AI costs across tools", "I want to see Codex and Claude usage together", "multi-tool token tracking", "token burn dashboard", or describes unifying usage data from multiple AI providers.
 ---
 
 # Multi-Tool Token Dashboard
