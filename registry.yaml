@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-06-27"
-total_skills: 148
+total_skills: 156
 by_status:
-  active: 20
-  draft: 128
+  active: 22
+  draft: 127
 
 skills:
   - name: action-class-policy
@@ -166,6 +166,12 @@ skills:
     domain: strategic-analysis
     health_score: null
 
+  - name: bitter-lesson-scorecard
+    version: "1.0.0"
+    status: cold
+    domain: uncategorized
+    health_score: null
+
   - name: boot-tax-monitor
     version: "1.0.0"
     status: draft
@@ -252,7 +258,7 @@ skills:
 
   - name: code-review-memory
     version: "1.0.0"
-    status: draft
+    status: active
     domain: code-review
     health_score: null
 
@@ -388,6 +394,12 @@ skills:
     domain: strategic-analysis
     health_score: 50.0
 
+  - name: failure-asymmetry
+    version: "1.0.0"
+    status: cold
+    domain: uncategorized
+    health_score: null
+
   - name: failure-mode-splitter
     version: "1.0.0"
     status: draft
@@ -410,6 +422,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: procurement
+    health_score: null
+
+  - name: find-skills
+    version: "1.0.0"
+    status: cold
+    domain: uncategorized
     health_score: null
 
   - name: find-your-first-loop
@@ -628,6 +646,12 @@ skills:
     domain: security
     health_score: 18.3
 
+  - name: optimize-description
+    version: "1.0.0"
+    status: active
+    domain: uncategorized
+    health_score: null
+
   - name: plan-stop-hook
     version: "1.0.0"
     status: draft
@@ -688,6 +712,12 @@ skills:
     domain: procurement
     health_score: null
 
+  - name: report-server
+    version: "1.0.0"
+    status: cold
+    domain: uncategorized
+    health_score: null
+
   - name: role-prompt-kit
     version: "1.0.0"
     status: draft
@@ -698,6 +728,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-architecture
+    health_score: null
+
+  - name: seedance-prompt
+    version: "1.0.0"
+    status: cold
+    domain: video-prompting
     health_score: null
 
   - name: self-healing-pipeline
@@ -734,6 +770,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-handoff
+    health_score: null
+
+  - name: setup-marketing-agents
+    version: "1.0.0"
+    status: cold
+    domain: uncategorized
     health_score: null
 
   - name: skill-portability-auditor
@@ -842,6 +884,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-infrastructure
+    health_score: null
+
+  - name: verification-view
+    version: "1.0.0"
+    status: cold
+    domain: uncategorized
     health_score: null
 
   - name: video-to-skill
