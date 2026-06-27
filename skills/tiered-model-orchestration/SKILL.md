@@ -1,6 +1,6 @@
 ---
 name: tiered-model-orchestration
-description: Plan a multi-phase build using a high-tier model for planning and verification, then switch mid-session to cheaper tiers for bulk execution. Produces a phase-by-phase model assignment with effort levels and a `/model` switch checklist.
+description: Plan a multi-phase build using a high-tier model for planning and verification, then switch mid-session to cheaper tiers for bulk execution, producing a phase-by-phase model assignment with effort levels. Use when the user says "tiered model orchestration", "plan expensive execute cheap", "how do I use Fable responsibly", "model tier per phase", "when to switch models", or describes a multi-step build and asks about model selection.
 ---
 
 # Tiered Model Orchestration
