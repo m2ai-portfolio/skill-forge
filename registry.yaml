@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-06-27"
-total_skills: 131
+total_skills: 140
 by_status:
   active: 20
-  draft: 111
+  draft: 120
 
 skills:
   - name: action-class-policy
@@ -142,6 +142,12 @@ skills:
     domain: code-quality
     health_score: null
 
+  - name: audience-model-router
+    version: "1.0.0"
+    status: draft
+    domain: agent-architecture
+    health_score: null
+
   - name: automation-platform-decision-guide
     version: "1.0.0"
     status: draft
@@ -274,6 +280,12 @@ skills:
     domain: agent-infrastructure
     health_score: null
 
+  - name: corrections-to-evals
+    version: "1.0.0"
+    status: draft
+    domain: agent-observability
+    health_score: null
+
   - name: counterargument-stress-test
     version: "1.0.0"
     status: active
@@ -352,11 +364,23 @@ skills:
     domain: agent-infrastructure
     health_score: null
 
+  - name: eval-set-builder
+    version: "1.0.0"
+    status: draft
+    domain: evaluation
+    health_score: null
+
   - name: executive-briefing
     version: "1.0.0"
     status: active
     domain: strategic-analysis
     health_score: 50.0
+
+  - name: failure-mode-splitter
+    version: "1.0.0"
+    status: draft
+    domain: quality-review
+    health_score: null
 
   - name: failure-mode-tool-router
     version: "1.0.0"
@@ -417,6 +441,12 @@ skills:
     status: draft
     domain: agent-architecture
     health_score: 0.0
+
+  - name: image-generation-gateway
+    version: "1.0.0"
+    status: draft
+    domain: infrastructure
+    health_score: null
 
   - name: image-to-implementation
     version: "1.0.0"
@@ -562,6 +592,12 @@ skills:
     domain: deliverable-production
     health_score: null
 
+  - name: multi-tool-token-dashboard
+    version: "1.0.0"
+    status: draft
+    domain: observability
+    health_score: null
+
   - name: nemoclaw-policy-gen
     version: "1.0.0"
     status: active
@@ -626,6 +662,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: procurement
+    health_score: null
+
+  - name: role-prompt-kit
+    version: "1.0.0"
+    status: draft
+    domain: prompt-engineering
     health_score: null
 
   - name: scheduled-agent-harness
@@ -698,6 +740,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: market-intelligence
+    health_score: null
+
+  - name: tiered-model-orchestration
+    version: "1.0.0"
+    status: draft
+    domain: model-usage
     health_score: null
 
   - name: token-burn-auditor
@@ -782,6 +830,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: ai-strategy
+    health_score: null
+
+  - name: workflow-pattern-guide
+    version: "1.0.0"
+    status: draft
+    domain: workflow-design
     health_score: null
 
   - name: workflow-tier-classifier
