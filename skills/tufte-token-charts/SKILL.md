@@ -1,6 +1,6 @@
 ---
 name: tufte-token-charts
-description: Visualize LLM token burn data as Tufte-style minimal charts — log y-scale, moving average, per-source breakdown, and five decision rules for reading the pattern. Turns raw usage numbers into delegation signals.
+description: Visualize LLM token-burn data as Tufte-style minimal charts (log y-scale, moving average, per-source breakdown) with five decision rules for reading the pattern, turning raw usage into delegation signals. Use when the user says "chart my token usage", "visualize my token burn", "show me my usage over time", or after running token-burn-auditor and wanting to explore the numbers visually over a date range.
 ---
 
 # Tufte Token Charts
