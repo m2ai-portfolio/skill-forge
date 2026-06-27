@@ -1,6 +1,6 @@
 ---
 name: audience-model-router
-description: Select the right model tier and retrieve a paste-ready prompt for a task, based on who will act on the output — builder, leader, or executive. Extends task-complexity routing with role-specific framing so the output lands at the right level of abstraction.
+description: Select the right model tier and retrieve a paste-ready prompt for a task based on who will act on the output (builder, leader, or executive), extending task-complexity routing with role-specific framing. Use when the user says "which model should I use for [task]", "give me a prompt for [task]", "audience model router", or describes a task and mentions who will see or use the output.
 ---
 
 # Audience Model Router
