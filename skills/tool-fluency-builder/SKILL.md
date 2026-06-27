@@ -1,6 +1,6 @@
 ---
 name: tool-fluency-builder
-description: Turn any AI tool or framework from "heard of it" to "can build with it" by generating a machine-ready, hands-on build guide. Goes beyond hello-world to produce a real, runnable project with annotated steps, pitfalls, and judgment calls. Closes the gap between familiarity and practical fluency.
+description: Turn any AI tool or framework from "heard of it" to "can build with it" by generating a machine-ready, hands-on build guide that goes beyond hello-world. Use when the user says "build guide for [tool]", "I want to actually learn [tool]", "hands-on [tool] guide", "tool fluency [tool]", "heard of but never built with [tool]", or "go beyond the hello world for [tool]".
 ---
 
 # Tool Fluency Builder
