@@ -1,6 +1,6 @@
 ---
 name: image-generation-gateway
-description: Route any image generation request through a single configured gateway. Eliminates per-tool hardcoding; every image workflow calls one skill, which dispatches to the configured provider (Flux, DALL-E, Imagen, or any MCP-connected image tool).
+description: Route any image-generation request through a single configured gateway, eliminating per-tool hardcoding so every image workflow calls one skill that dispatches to the configured provider (Flux, DALL-E, etc.). Use when the user says "generate an image", "create an image", "produce a visual", invokes any workflow that needs image output, or is configuring a shared image-generation entry point for the session.
 ---
 
 # Image Generation Gateway
