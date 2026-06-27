@@ -1,6 +1,6 @@
 ---
 name: agent-maintenance-loop
-description: Run a structured 6-step maintenance audit on any agent -- job check, last-ten-runs review, seven-surface inspection, replay pack, delete-before-you-add pass, and a keep/change/pause/retire decision. Use when an agent has been running for a while, after a model upgrade, or when outputs have started to feel off.
+description: Run a structured 6-step maintenance audit on any agent (job check, last-ten-runs review, seven-surface inspection, replay pack, delete-before-you-add pass, and verdict). Use when the user says "/agent-maintenance", "audit this agent", "is this agent still good", "my agent feels off", "run a maintenance pass on X", "should I keep this agent", or after any model upgrade, tool change, or connector change that could affect the agent.
 ---
 
 # Agent Maintenance Loop
