@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-06-27"
-total_skills: 146
+total_skills: 148
 by_status:
   active: 20
-  draft: 126
+  draft: 128
 
 skills:
   - name: action-class-policy
@@ -141,6 +141,12 @@ skills:
     status: draft
     domain: developer-tooling
     health_score: 0.0
+
+  - name: api-spend-tracker
+    version: "1.0.0"
+    status: draft
+    domain: cost-management
+    health_score: null
 
   - name: artifact-contract-validator
     version: "1.0.0"
@@ -704,6 +710,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: ai-evaluation
+    health_score: null
+
+  - name: session-behavioral-distillation
+    version: "1.0.0"
+    status: draft
+    domain: workflow-optimization
     health_score: null
 
   - name: session-behavioral-playbook
