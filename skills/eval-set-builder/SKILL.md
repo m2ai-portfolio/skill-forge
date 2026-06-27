@@ -1,6 +1,6 @@
 ---
 name: eval-set-builder
-description: Turn 3–5 representative real tasks from your actual workflow into a reusable routing benchmark. Scores models and harnesses on correctness, source discipline, review burden, time-to-accepted-artifact, cost, and failure behavior. Re-run on each new model release to get evidence instead of vibes. Trigger: "eval set builder", "build a benchmark", "routing benchmark", "compare models on real work", "test suite for model selection", "eval-set-builder".
+description: Turn 3 to 5 representative real tasks from your actual workflow into a reusable routing benchmark that scores models and harnesses on correctness, source discipline, review burden, and time-to-accepted-artifact. Use when you want to know whether a new model version is actually better before migrating, are choosing between two harnesses or prompting approaches and need more than intuition, or are onboarding a team to model routing and need a shared benchmark.
 ---
 
 # Eval Set Builder
