@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-06-27"
-total_skills: 156
+total_skills: 159
 by_status:
   active: 22
-  draft: 127
+  draft: 130
 
 skills:
   - name: action-class-policy
@@ -46,6 +46,12 @@ skills:
     domain: agent-architecture
     health_score: 49.0
 
+  - name: agent-handoff-card
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
+    health_score: null
+
   - name: agent-infra-scorer
     version: "1.0.0"
     status: draft
@@ -81,6 +87,12 @@ skills:
     status: active
     domain: code-quality
     health_score: 18.3
+
+  - name: agent-receipt-vocabulary
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
+    health_score: null
 
   - name: agent-run-schema
     version: "1.0.0"
@@ -776,6 +788,12 @@ skills:
     version: "1.0.0"
     status: cold
     domain: uncategorized
+    health_score: null
+
+  - name: single-task-agent-prompt
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
     health_score: null
 
   - name: skill-portability-auditor
