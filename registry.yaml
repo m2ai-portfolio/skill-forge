@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-06-26"
-total_skills: 129
+generated_at: "2026-06-27"
+total_skills: 131
 by_status:
   active: 20
-  draft: 109
+  draft: 111
 
 skills:
   - name: action-class-policy
@@ -722,6 +722,18 @@ skills:
     version: "1.0.0"
     status: draft
     domain: quality-assurance
+    health_score: null
+
+  - name: tufte-charts
+    version: "1.0.0"
+    status: draft
+    domain: visualization
+    health_score: null
+
+  - name: tufte-token-charts
+    version: "1.0.0"
+    status: draft
+    domain: data-visualization
     health_score: null
 
   - name: validated-data-migration
