@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-06-27"
-total_skills: 140
+total_skills: 146
 by_status:
   active: 20
-  draft: 120
+  draft: 126
 
 skills:
   - name: action-class-policy
@@ -104,6 +104,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: procurement
+    health_score: null
+
+  - name: agentic-harness-designer
+    version: "1.0.0"
+    status: draft
+    domain: agent-operations
     health_score: null
 
   - name: agentify-docs
@@ -550,6 +556,12 @@ skills:
     domain: mcp-tooling
     health_score: null
 
+  - name: media-transcription
+    version: "1.0.0"
+    status: draft
+    domain: productivity
+    health_score: null
+
   - name: meeting-synthesis
     version: "1.0.0"
     status: draft
@@ -579,6 +591,12 @@ skills:
     status: draft
     domain: developer-tooling
     health_score: 0.0
+
+  - name: model-release-deep-dive
+    version: "1.0.0"
+    status: draft
+    domain: model-operations
+    health_score: null
 
   - name: model-router
     version: "1.0.0"
@@ -706,6 +724,12 @@ skills:
     domain: agent-handoff
     health_score: null
 
+  - name: skill-portability-auditor
+    version: "1.0.0"
+    status: draft
+    domain: agent-operations
+    health_score: null
+
   - name: source-packet
     version: "1.0.0"
     status: draft
@@ -758,6 +782,18 @@ skills:
     version: "1.0.0"
     status: draft
     domain: ai-evaluation
+    health_score: null
+
+  - name: tool-build-guide-generator
+    version: "1.0.0"
+    status: draft
+    domain: developer-productivity
+    health_score: null
+
+  - name: tool-fluency-builder
+    version: "1.0.0"
+    status: draft
+    domain: learning
     health_score: null
 
   - name: tool-migration-brief
