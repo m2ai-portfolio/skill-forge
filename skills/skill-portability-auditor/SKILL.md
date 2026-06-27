@@ -1,6 +1,6 @@
 ---
 name: skill-portability-auditor
-description: Audit a SKILL.md file and answer "if I had to move this skill to Codex, Cursor, or ChatGPT tomorrow, what would break?" Produces a ranked portability-debt report covering hook dependencies, MCP-server assumptions, permission requirements, install-path conventions, and runtime-specific syntax.
+description: Audit a SKILL.md and answer "if I had to move this skill to Codex, Cursor, or ChatGPT tomorrow, what would break?", producing a ranked portability-debt report. Use when the user says "audit this skill for portability", "what would break if I moved this", "skill portability check", "port this skill to Codex", "check this skill for lock-in", or provides a SKILL.md path and asks whether it is portable.
 ---
 
 # Skill Portability Auditor
