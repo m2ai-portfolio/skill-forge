@@ -1,6 +1,6 @@
 ---
 name: delete-before-you-add
-description: Run an 8-question diagnostic over an agent's current configuration before adding any new rule, tool, example, or permission. Surfaces what should be deleted first. Based on the finding that removing bloat from an agent often improves it more than adding new capabilities.
+description: Run an 8-question diagnostic over an agent's current configuration before adding any new rule, tool, example, or permission, surfacing what should be deleted first. Use when the user says "delete-before-you-add", "should I add this rule", "I want to add a tool to this agent", "prune this agent", or before any edit to an agent's prompt, tool list, or permissions.
 ---
 
 # Delete-Before-You-Add
