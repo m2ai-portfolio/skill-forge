@@ -1,6 +1,6 @@
 ---
 name: media-transcription
-description: Transcribe a local audio or video file into a plain-text artifact using an AI transcription API (default: AssemblyAI). Produces a clean transcript file ready for downstream processing. Use when you have a recording that needs to become searchable text.
+description: Transcribe a local audio or video file into a plain-text artifact using an AI transcription API (default AssemblyAI), producing a clean transcript file. Use when the user says "transcribe this file", "convert audio to text", "transcribe my recording", "get the transcript from", or provides a path to an .mp3, .mp4, .m4a, .wav, .ogg, or .webm media file and asks for its content.
 ---
 
 # Media Transcription
