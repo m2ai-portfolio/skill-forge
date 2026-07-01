@@ -1,205 +1,204 @@
 ---
 name: agentic-os-layer-model
-description: Map any agentic OS to a 5-layer mental model (Identity → Rules/Hooks → Skills → Agents → Tools/MCPs/CLIs), assess each layer's rot rate, and generate a rot file — a maintenance artifact that tracks when each layer was last updated and when it needs attention. Use when building, auditing, or maintaining an AI operating system, or when saying "my agent system is going stale", "what layers does my AI OS need", "how do I structure my agentic setup", "my skills are out of date", "design my AI OS", "what is a soul file".
+description: >
+  Walk all five layers of a Claude Code agentic OS — Identity, Rules/Hooks, Skills, Agents, Tools/MCPs — and rate each layer's staleness (rot rate). Produces a prioritized refresh checklist showing which layers need immediate attention vs. which are healthy. Use when your agent setup "feels off", before a major model or workflow change, or as part of a periodic OS maintenance pass. Trigger phrases: "audit my OS", "what's stale in my setup", "rot rate check", "layer audit", "agentic OS health check", "my agent setup needs a refresh".
 ---
 
 # Agentic OS Layer Model
 
-Produces a structured map of any agentic OS across five layers with rot rate assessments and a rot file — the maintenance artifact most builders never create. Works for personal setups, business setups, or domain-specific command centers (one per domain).
+Every agentic OS has five layers, from most-static (inner) to most-dynamic (outer). Each layer
+ages at a different rate — the "rot rate." An identity file can stay valid for months; an MCP
+server endpoint might break in a week. This skill walks all five layers and produces a
+staleness assessment with concrete refresh actions.
 
-## Trigger
+Mental model: layers are like the Earth's crust. Inner layers are slow-changing and
+load-bearing. Outer layers are exposed to more volatility. A setup that looks fine from the
+outside (polished dashboard, responsive agent) can be silently rotting at the inner layers.
+The dashboard is meaningless without the plumbing underneath.
 
-Use when:
-- Starting a new agentic OS from scratch and wanting a blueprint
-- An existing AI system is drifting or going stale and you need to know which layer to fix first
-- You want to audit what you have against what you need
-- You're explaining an AI OS to someone new and need a clear mental model
-- You want to build a rot file for long-term maintenance
+## Layers and Typical Rot Rates
 
-Do NOT use for:
-- Optimizing existing skills — use `goal-os-optimize` for that
-- Designing agent orchestration patterns — use `dynamic-workflow-pattern-selector` for that
-- Building a specific agent from scratch — use `agentic-harness-designer` for that
+| # | Layer | Typical Rot Rate | What Goes Stale |
+|---|-------|-----------------|-----------------|
+| 1 | Identity / Soul | Months | Persona claims, business domain, deprecated tool references |
+| 2 | Rules & Hooks | Weeks-months | Dead path references, hooks for removed tools, outdated constraints |
+| 3 | Skills | Weeks | Stale API endpoints, wrong model IDs, zero-invocation debt |
+| 4 | Agents | Days-weeks | Deprecated model IDs, missing tool authorizations, outdated capabilities |
+| 5 | Tools / MCPs / CLI | Days | Dead endpoints, expired tokens, missing binaries |
 
-## The 5 Layers
+## When to Use
 
-Think of the layers like the Earth: the core (identity) is stable and rarely touched; the surface (tools) is subject to fast-moving weather. Each layer sits on the one below it. Break the inner layers and the outer ones fail.
+- Agent behavior has shifted without a clear cause
+- After a major model upgrade or MCP server migration
+- Quarterly or periodic OS maintenance pass
+- Before onboarding a new agent or skill that depends on existing infrastructure
+- When the OS has not been reviewed in more than 30 days
 
-### Layer 1 — Identity (Soul File)
+## Inputs
 
-**What it is:** The agent's personality, working style, and pointer index. A short file (50–100 lines max) that defines who the system is and where its rules, skills, and references live.
+- **OS root** (optional): path to the top-level config directory. Defaults to `./`.
+- **Scope** (optional): layers to audit -- `all` (default), or a comma-separated subset:
+  `identity`, `rules`, `skills`, `agents`, `tools`
+- **Last-reviewed date** (optional): if provided, flags items not touched since that date
 
-**Common form:** `CLAUDE.md`, `agents.md`, or `soul.md` depending on the agent framework.
+If no OS root is given, scan the current directory and common config locations.
 
-**Pattern — pointer layer:** Rather than embedding all rules and skills directly in the identity file, reference them by path. The identity file becomes a lean index: "when doing X, see rules/X.md." This keeps the boot context small and the references composable.
+## Phases
 
-**Rot rate:** Slowest. High upfront cost; low maintenance cost. Expect minor updates every 30–90 days, not weekly.
+### Phase 0 -- Discover the OS Layout
 
-**Staleness signals:**
-- Identity references files that no longer exist
-- Personality instructions contradict current rules files
-- The file has grown beyond 200 lines (pointer rot — embed creep)
+Identify what exists at each layer before auditing:
 
----
+```bash
+# Identity layer
+ls *.md CLAUDE.md AGENTS.md soul.md 2>/dev/null
 
-### Layer 2 — Rules and Hooks
+# Rules / hooks layer
+ls rules/ hooks/ .claude/rules/ .claude/hooks/ 2>/dev/null
 
-**What it is:** Guardrails and deterministic event handlers.
+# Skills layer
+ls skills/ .claude/skills/ 2>/dev/null | head -30
 
-- **Rules:** Strong suggestions — things the agent should or should not do in specific scenarios. Written as policy; enforced by the model.
-- **Hooks:** Deterministic code that fires on specific events (PreToolUse, PostToolUse, SessionStart, Stop). The only deterministic parts of an agentic OS.
+# Agents layer
+find . -maxdepth 3 \( -name "agent.yaml" -o -name "AGENT.md" -o -name "agent.config.json" \) 2>/dev/null
 
-**When they emerge:** Rules and hooks should NOT be designed upfront. They emerge from real usage failures. When the agent does something wrong repeatedly, that is the signal to write a rule or hook. Premature rules create noise.
-
-**Rot rate:** Slow-to-moderate. Rules that describe desired behaviors become stale when the underlying workflow changes. Hooks tied to external tools rot when those tools change their interface.
-
-**Staleness signals:**
-- Rules reference workflows or files that were retired
-- Hooks fire on tool names that have been renamed or removed
-- Rules contradict each other (policy drift)
-
----
-
-### Layer 3 — Skills
-
-**What it is:** Repeatable workflows with human-in-the-loop elements. A skill is a named, documented procedure for a task that happens 5–15 times in slightly different ways.
-
-**Two types:**
-- **Process-oriented skills:** Structured procedures with judgment points and HIL gates. Examples: research workflow, content review, planning session.
-- **Functional skills:** Connect to an external API or tool with little nuance. Examples: pull the latest meeting transcript from a transcription service, sync a calendar.
-
-**Rot rate:** Fastest of all five layers. Expect weekly updates for active skills. Rot sources: smarter models need less instruction to achieve the same result; provider APIs change; personal workflows evolve.
-
-**Expert tip:** Run `/goal optimize [skill name] according to best practices as of today` on a weekly cadence to keep active skills current without manual review. Keep a log of what changed.
-
-**When a skill has "graduated" to an agent:** When a set of skills collectively represents a distinct role that runs on a regular cadence without you triggering each step, crystallize them into an agent.
-
-**Staleness signals:**
-- Skill references a model by name that has been deprecated or renamed
-- Skill has a high rate of mid-run corrections (the procedure no longer matches your workflow)
-- Two skills in your library do the same thing with slight wording differences (skill drift)
-
----
-
-### Layer 4 — Agents
-
-**What it is:** Crystallized roles. An agent is an identity (Layer 1) + rules/hooks (Layer 2) + skills (Layer 3) bundled into a persistent entity with its own cadence and area of responsibility. Agents are adjacent to roles; skills are adjacent to verbs.
-
-**When to promote to an agent:** When a skill cluster has accumulated enough responsibility that it makes more sense to hire a role than to keep running individual skills manually.
-
-**Rot rate:** Moderate. Agents rot when their role definition drifts from their actual task load, or when the skills they rely on update without the agent definition updating.
-
-**Staleness signals:**
-- Agent's `agents.md` or system prompt references skills that no longer exist
-- The agent's role overlaps with another agent (responsibility drift)
-- The agent is never invoked — its responsibilities were absorbed elsewhere
-
----
-
-### Layer 5 — Tools, MCPs, and CLIs
-
-**What it is:** External integrations. REST APIs, MCP servers, CLI tools. These give the system its reach: reading files, querying databases, running code, browsing the web, calling external services.
-
-**Rot rate:** Varies entirely by provider. A CLI tool maintained by a major vendor may be stable for years. An MCP server from a startup may change weekly.
-
-**Staleness signals:**
-- Tool calls return 404 or auth errors (endpoint changed)
-- An MCP server that used to be available is no longer listed in the registry
-- A CLI tool's flags changed and old invocations fail silently
-
----
-
-## Rot Rate Summary
-
-| Layer | Rot Rate | Update Cadence |
-|-------|----------|----------------|
-| 1 — Identity | Very slow | Every 30–90 days |
-| 2 — Rules & Hooks | Slow–moderate | When failures occur; quarterly sweep |
-| 3 — Skills | Fast | Weekly for active skills |
-| 4 — Agents | Moderate | When role or skill set changes |
-| 5 — Tools/MCPs/CLIs | Provider-dependent | When provider releases updates |
-
----
-
-## The Rot File
-
-The rot file is the artifact most builders never create. It is a simple markdown file (one per OS or domain command center) that tracks expiration state across all five layers.
-
-**Create it at:** `./<your-os-name>-rot.md` or `./rot.md` in your agent's config directory.
-
-**Template:**
-
-```markdown
-# [OS Name] Rot File
-Last audited: YYYY-MM-DD
-
-## Layer 1 — Identity
-- File: [path]
-- Last updated: YYYY-MM-DD
-- Review trigger: Next time identity file grows past 200 lines, or a rules/skills file it points to is removed
-- Status: GREEN / YELLOW / RED
-
-## Layer 2 — Rules and Hooks
-- Rules files: [list]
-- Hooks: [list with event types]
-- Last updated: YYYY-MM-DD
-- Review trigger: Any new recurring failure mode from the agent
-- Status: GREEN / YELLOW / RED
-
-## Layer 3 — Skills
-- Active skills: [list]
-- Last optimized: YYYY-MM-DD (per skill)
-- Stale threshold: 30 days without a run = candidate for archive
-- Status: GREEN / YELLOW / RED
-
-## Layer 4 — Agents
-- Agents: [list with role descriptions]
-- Last role review: YYYY-MM-DD
-- Status: GREEN / YELLOW / RED
-
-## Layer 5 — Tools and MCPs
-- Tools: [list]
-- Last checked: YYYY-MM-DD
-- Review trigger: Any auth error or unexpected behavior in a tool call
-- Status: GREEN / YELLOW / RED
+# Tools / MCPs layer
+ls .mcp.json mcp.json settings.json .claude/settings.json 2>/dev/null
 ```
 
-Set each layer to RED when it has known staleness issues, YELLOW when it is due for review, GREEN when recently audited.
+If none of the five layers have discoverable files, ask the user to confirm the OS root before
+proceeding.
 
----
+### Phase 1 -- Identity / Soul
 
-## Domain Isolation
+For each identity file found (CLAUDE.md, AGENTS.md, soul.md, or equivalent):
 
-Build one OS per domain rather than one OS for everything. Each domain (personal, business, health, specific client project) gets its own command center with its own five layers. Benefits:
-- Smaller, more focused identity files
-- Rules don't bleed across domains
-- Skills optimized for domain-specific workflows
-- Cleaner rot tracking (domain X is GREEN; domain Y is RED)
+Check for:
+1. **Tool references** -- tools, CLIs, or services named that may no longer exist or be installed
+2. **Model references** -- hardcoded model names or versions that may have changed
+3. **Path references** -- hardcoded paths to deleted or moved files
+4. **Domain claims** -- assertions about scope, audience, or purpose that may have shifted
+5. **Last-modified age** -- `git log -1 --format="%ar" <file>`; flag if >90 days with no change
 
-Domains that share infrastructure (same tools, same hooks) can reference shared layers by pointer from their individual identity files.
+Rate the layer:
+- **FRESH** -- no stale signals, or only LOW severity
+- **AGING** -- 1-2 medium-severity signals; schedule a review
+- **STALE** -- 3+ signals OR any HIGH severity; refresh needed now
 
----
+### Phase 2 -- Rules & Hooks
 
-## Audit Protocol
+For each rules file and hook configuration:
 
-When asked to audit an existing agentic OS:
+Check for:
+1. **Dead path references** -- paths in rules or hook scripts that no longer exist
+2. **Orphaned hooks** -- hooks registered for tools that are no longer in use
+3. **Contradicted rules** -- rules that conflict with newer configuration
+4. **Hook script existence** -- for any hook that runs an external script, verify it exists and
+   is executable
+5. **Last-modified age** -- flag rules not touched in >60 days if the associated tooling changed
 
-1. **List what exists** — ask the user to describe or provide their current setup: what CLAUDE.md/soul file looks like, which rules files exist, which skills are active, which agents (if any) are running, which tools/MCPs are wired in.
+```bash
+# Quick check: hook script paths exist
+grep -r '"command"\|"script"\|"path"' .claude/settings.json 2>/dev/null | grep '"/' | head -20
+```
 
-2. **Map to the 5 layers** — assign each piece to its layer. Flag anything that doesn't fit cleanly (it may indicate a layering violation).
+Rate the layer: FRESH / AGING / STALE (same criteria as Phase 1).
 
-3. **Assess rot per layer** — for each layer, ask: "When was this last updated? Has anything upstream of it changed?" Assign GREEN/YELLOW/RED.
+### Phase 3 -- Skills
 
-4. **Generate a rot file** — produce the rot file template filled in with the actual current state.
+For each skill directory found:
 
-5. **Prioritize** — red layers first; skills nearly always need attention; identity rarely does.
+Check for:
+1. **API/URL references** -- hardcoded endpoint URLs; note each for manual reachability verification
+2. **Model name references** -- model ID or version strings; flag for verification against current
+   provider docs
+3. **Cross-skill references** -- skills that reference another skill by name; verify the referenced
+   skill directory exists
+4. **Zero-invocation signals** -- if `skill-registry.yaml` is present, check `metrics.invocations_30d`;
+   flag skills with 0 invocations and no callsite sponsorship
+5. **Last-modified age** -- flag skills not touched in >30 days that reference volatile external services
 
----
+For each skill, emit one line:
+```
+[FRESH|AGING|STALE] <skill-name> -- <reason if not FRESH>
+```
+
+Summarize: N fresh, N aging, N stale.
+
+### Phase 4 -- Agents
+
+For each agent config found (agent.yaml, AGENT.md, agent.config.json):
+
+Check for:
+1. **Model IDs** -- hardcoded model names; flag for human verification against current provider catalog
+2. **Tool authorizations** -- tools listed in `allowedTools` or equivalent; verify each is still valid
+3. **MCP dependencies** -- MCP servers the agent depends on; confirm they appear in the active MCP config
+4. **Budget limits** -- max-turns or token limits; verify still appropriate for the agent's current scope
+5. **Last-modified age** -- flag agent configs not touched in >30 days if the model or tool landscape changed
+
+Rate the layer: FRESH / AGING / STALE.
+
+### Phase 5 -- Tools / MCPs / CLI
+
+For each MCP server entry and CLI tool referenced in config:
+
+Check for:
+1. **Reachability** -- for HTTP-based MCP servers: `curl -s --max-time 5 <url>/health`; log timeouts as STALE
+2. **Binary existence** -- for local CLI tools: `which <tool>` or check the declared install path
+3. **Auth token age** -- if config references tokens or API keys, note last rotation date if available
+4. **Schema version** -- if the MCP server exposes a version endpoint, compare against last configured version
+5. **Last-modified age** -- flag MCP entries not updated in >14 days if the service has published changes
+
+Rate the layer: FRESH / AGING / STALE.
+
+## Report Format
+
+```
+AGENTIC OS LAYER AUDIT
+======================
+OS root: <path>
+Audit date: <today>
+Layers scanned: <list>
+
+LAYER HEALTH SUMMARY
+--------------------
+Layer 1 -- Identity/Soul:    [FRESH|AGING|STALE]
+Layer 2 -- Rules/Hooks:      [FRESH|AGING|STALE]
+Layer 3 -- Skills:           [FRESH|AGING|STALE]  (N fresh, N aging, N stale)
+Layer 4 -- Agents:           [FRESH|AGING|STALE]
+Layer 5 -- Tools/MCPs/CLI:   [FRESH|AGING|STALE]
+
+OVERALL STATUS: [HEALTHY | MAINTENANCE NEEDED | CRITICAL REFRESH REQUIRED]
+
+FINDINGS (sorted by severity)
+------------------------------
+[HIGH] Layer N -- <file or item> -- <what is stale and why>
+[MEDIUM] ...
+[LOW] ...
+
+PRIORITIZED REFRESH ACTIONS
+----------------------------
+1. [Layer N] <specific action> -- estimated effort: <small|medium|large>
+2. ...
+
+NEXT AUDIT DATE
+---------------
+Recommended next full audit: <today + 14|30|60|90 days based on worst rot rate found>
+```
+
+## Verification
+
+- Every STALE or AGING finding must cite the specific file, line, or config key that is stale.
+- Do not flag a model name as stale without noting that verification requires the user to check
+  the current provider's model catalog.
+- If an MCP health check times out, record the URL and timeout value -- do not silently skip it.
+- Report every finding, even LOW severity -- the user decides what to act on.
 
 ## Source Attribution
 
-Technique: 5-Layer Agentic OS Mental Model with Rot Rates
-Source: Mark Kashef YouTube
-URL: https://www.youtube.com/watch?v=YjkteijEyzQ
-Published: 2026-06-30
-Title: "Master All 5 Layers of Every Agentic OS"
+Mental model and layer taxonomy from Mark Kashef, YouTube, 2026-06-30:
+*"Master All 5 Layers of Every Agentic OS"*
+`https://www.youtube.com/watch?v=YjkteijEyzQ`
+
+Rot rate concept: the pace at which a specific piece of context has an expiration date, applied
+per-layer. Adaptation: structured audit phases and severity rating across all five layers.
