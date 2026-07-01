@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-06-27"
-total_skills: 159
+generated_at: "2026-07-01"
+total_skills: 165
 by_status:
   active: 22
-  draft: 130
+  draft: 136
 
 skills:
   - name: action-class-policy
@@ -124,6 +124,12 @@ skills:
     domain: agent-operations
     health_score: null
 
+  - name: agentic-os-layer-model
+    version: "1.0.0"
+    status: draft
+    domain: agent-maintenance
+    health_score: null
+
   - name: agentify-docs
     version: "1.0.0"
     status: draft
@@ -136,10 +142,34 @@ skills:
     domain: developer-tooling
     health_score: 18.3
 
+  - name: ai-context-export-scheduler
+    version: "1.0.0"
+    status: draft
+    domain: data-portability
+    health_score: null
+
   - name: ai-cost-exposure-audit
     version: "1.0.0"
     status: draft
     domain: strategic-analysis
+    health_score: null
+
+  - name: ai-exit-lever-auditor
+    version: "1.0.0"
+    status: draft
+    domain: ai-evaluation
+    health_score: null
+
+  - name: ai-lock-in-exit-auditor
+    version: "1.0.0"
+    status: draft
+    domain: security-privacy
+    health_score: null
+
+  - name: ai-tool-vetting-test
+    version: "1.0.0"
+    status: draft
+    domain: security-privacy
     health_score: null
 
   - name: anticipation-gap-audit
@@ -303,6 +333,12 @@ skills:
     status: active
     domain: context-management
     health_score: 47.0
+
+  - name: context-placement-map
+    version: "1.0.0"
+    status: draft
+    domain: ai-strategy
+    health_score: null
 
   - name: control-map
     version: "1.0.0"
