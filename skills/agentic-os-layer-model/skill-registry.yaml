@@ -1,0 +1,21 @@
+name: agentic-os-layer-model
+version: "1.0.0"
+status: draft
+source:
+  type: youtube
+  creator: Mark Kashef
+  url: https://www.youtube.com/watch?v=YjkteijEyzQ
+  title: "Master All 5 Layers of Every Agentic OS"
+  published: "2026-06-30"
+intake_date: "2026-07-01"
+taxonomy:
+  domain: agent-architecture
+  complexity: intermediate
+tags:
+  - agentic-os
+  - mental-model
+  - agent-architecture
+  - rot-rate
+  - maintenance
+  - soul-file
+  - system-design
