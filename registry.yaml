@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-07-02"
-total_skills: 166
+total_skills: 169
 by_status:
   active: 22
-  draft: 137
+  draft: 140
 
 skills:
   - name: action-class-policy
@@ -128,6 +128,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-maintenance
+    health_score: null
+
+  - name: agentic-work-loop
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
     health_score: null
 
   - name: agentify-docs
@@ -357,6 +363,12 @@ skills:
     status: active
     domain: strategic-analysis
     health_score: 50.0
+
+  - name: cross-model-memory-bridge
+    version: "1.0.0"
+    status: draft
+    domain: agent-memory
+    health_score: null
 
   - name: cross-model-peer-review
     version: "1.0.0"
@@ -699,6 +711,12 @@ skills:
     status: active
     domain: security
     health_score: 18.3
+
+  - name: open-skills-authoring-kit
+    version: "1.0.0"
+    status: draft
+    domain: agent-authoring
+    health_score: null
 
   - name: optimize-description
     version: "1.0.0"
