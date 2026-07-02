@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-07-02"
-total_skills: 169
+total_skills: 170
 by_status:
   active: 22
-  draft: 140
+  draft: 141
 
 skills:
   - name: action-class-policy
@@ -62,6 +62,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-governance
+    health_score: null
+
+  - name: agent-loop-receipt-designer
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
     health_score: null
 
   - name: agent-maintenance-loop
