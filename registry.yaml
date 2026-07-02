@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-07-02"
-total_skills: 170
+total_skills: 171
 by_status:
   active: 22
-  draft: 141
+  draft: 142
 
 skills:
   - name: action-class-policy
@@ -717,6 +717,12 @@ skills:
     status: active
     domain: security
     health_score: 18.3
+
+  - name: open-brain-mcp-spec
+    version: "1.0.0"
+    status: draft
+    domain: agent-infrastructure
+    health_score: null
 
   - name: open-skills-authoring-kit
     version: "1.0.0"
