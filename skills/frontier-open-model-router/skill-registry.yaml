@@ -1,0 +1,34 @@
+name: frontier-open-model-router
+version: "1.0.0"
+status: draft
+created: "2026-07-02"
+last_reviewed: null
+
+source:
+  type: newsletter
+  url: "https://natesnewsletter.substack.com/p/you-can-build-80-of-your-own-ai-memory"
+  author: "Nate Jones"
+  date: "2026-07-01"
+
+taxonomy:
+  domain: agent-architecture
+  complexity: beginner
+
+metrics:
+  invocations_30d: 0
+  last_invoked: null
+  manual_rating: null
+  health_score: null
+
+learning:
+  total_patches_applied: 0
+  total_patches_proposed: 0
+  last_patch_at: null
+  effectiveness_score: null
+
+lineage:
+  parent_version: null
+  derived_from: null
+  changelog: []
+
+dependencies: []
