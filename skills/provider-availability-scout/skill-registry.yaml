@@ -1,6 +1,6 @@
 name: provider-availability-scout
 version: "1.0.0"
-status: draft
+status: cold
 created: "2026-05-08"
 last_reviewed: null
 sync_hash: null

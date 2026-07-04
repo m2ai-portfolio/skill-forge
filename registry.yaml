@@ -7,7 +7,7 @@ generated_at: "2026-07-04"
 total_skills: 198
 by_status:
   active: 22
-  draft: 142
+  draft: 129
 
 skills:
   - name: action-class-policy
@@ -306,7 +306,7 @@ skills:
 
   - name: buyer-questions
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: sales-enablement
     health_score: null
 
@@ -456,7 +456,7 @@ skills:
 
   - name: decision-interview-builder
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: career-development
     health_score: null
 
@@ -486,7 +486,7 @@ skills:
 
   - name: describability-gate
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: ai-strategy
     health_score: null
 
@@ -642,7 +642,7 @@ skills:
 
   - name: impl-arch-audit
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: enterprise-ai
     health_score: null
 
@@ -798,7 +798,7 @@ skills:
 
   - name: model-release-deep-dive
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: model-operations
     health_score: null
 
@@ -888,7 +888,7 @@ skills:
 
   - name: promotion-packet-auditor
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: strategic-analysis
     health_score: null
 
@@ -906,13 +906,13 @@ skills:
 
   - name: provider-availability-scout
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: agent-infrastructure
     health_score: null
 
   - name: reasoning-extractor
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: knowledge-work
     health_score: null
 
@@ -996,7 +996,7 @@ skills:
 
   - name: session-work-log
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: agent-handoff
     health_score: null
 
@@ -1092,13 +1092,13 @@ skills:
 
   - name: tool-build-guide-generator
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: developer-productivity
     health_score: null
 
   - name: tool-fluency-builder
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: learning
     health_score: null
 
@@ -1164,7 +1164,7 @@ skills:
 
   - name: workflow-decomposer
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: ai-strategy
     health_score: null
 
@@ -1176,7 +1176,7 @@ skills:
 
   - name: workflow-investment-scorer
     version: "1.0.0"
-    status: draft
+    status: cold
     domain: ai-strategy
     health_score: null
 
