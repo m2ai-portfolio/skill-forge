@@ -1,0 +1,11 @@
+name: three-layer-memory-scaffold
+version: "1.0.0"
+status: cold
+source:
+  type: newsletter
+  url: https://natesnewsletter.substack.com/p/codex-five-leadership-chairs-tibo-interview
+  author: Nate B. Jones
+  date: "2026-05-16"
+taxonomy:
+  domain: memory-systems
+  complexity: weekend-project
