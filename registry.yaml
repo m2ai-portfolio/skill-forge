@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-07-04"
-total_skills: 198
+generated_at: "2026-07-06"
+total_skills: 201
 by_status:
   active: 22
-  draft: 129
+  draft: 132
 
 skills:
   - name: action-class-policy
@@ -592,6 +592,12 @@ skills:
     domain: agent-architecture
     health_score: null
 
+  - name: frontier-model-wargame
+    version: "1.0.0"
+    status: draft
+    domain: agentic-workflows
+    health_score: null
+
   - name: frontier-open-model-router
     version: "1.0.0"
     status: draft
@@ -844,6 +850,12 @@ skills:
     domain: agent-authoring
     health_score: null
 
+  - name: optimization-loop-kill-switch
+    version: "1.0.0"
+    status: draft
+    domain: agent-loops
+    health_score: null
+
   - name: optimize-description
     version: "1.0.0"
     status: active
@@ -920,6 +932,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: agent-architecture
+    health_score: null
+
+  - name: reframe-before-optimize
+    version: "1.0.0"
+    status: draft
+    domain: agent-loops
     health_score: null
 
   - name: remote-channels
