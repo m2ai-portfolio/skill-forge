@@ -3,13 +3,19 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-07-06"
-total_skills: 201
+generated_at: "2026-07-09"
+total_skills: 205
 by_status:
-  active: 22
-  draft: 132
+  active: 23
+  draft: 135
 
 skills:
+  - name: acceptance-constitution
+    version: "1.0.0"
+    status: draft
+    domain: build-quality
+    health_score: null
+
   - name: action-class-policy
     version: "1.0.0"
     status: draft
@@ -322,6 +328,12 @@ skills:
     domain: agent-commerce
     health_score: null
 
+  - name: check-appeals-gate
+    version: "1.0.0"
+    status: draft
+    domain: agent-verification
+    health_score: null
+
   - name: classify-agent
     version: "1.0.0"
     status: active
@@ -374,6 +386,12 @@ skills:
     version: "1.0.0"
     status: cold
     domain: security
+    health_score: null
+
+  - name: compensating-complexity-auditor
+    version: "1.0.0"
+    status: active
+    domain: prompt-engineering
     health_score: null
 
   - name: completion-vs-acceptance
@@ -1160,6 +1178,12 @@ skills:
     version: "1.0.0"
     status: cold
     domain: uncategorized
+    health_score: null
+
+  - name: verified-persona-panel
+    version: "1.0.0"
+    status: draft
+    domain: quality-assurance
     health_score: null
 
   - name: video-to-skill
