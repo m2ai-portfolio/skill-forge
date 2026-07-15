@@ -21,7 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          # Full history so the push-retry step can rebase onto a moved main
+          # (a shallow depth-1 checkout has no merge-base to rebase against).
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
@@ -44,4 +46,17 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add registry.yaml
           git commit -m "chore(forge): regenerate registry.yaml [skip ci]"
-          git push origin main
+          # Concurrent skill-PR merges can advance main between checkout and push,
+          # which rejects a plain push (non-fast-forward). Rebase onto the latest
+          # main and retry so simultaneous merges don't red-X this job.
+          for attempt in 1 2 3 4 5; do
+            if git push origin main; then
+              echo "pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "push rejected on attempt $attempt; rebasing onto latest main"
+            git pull --rebase origin main
+            sleep $((RANDOM % 5 + 2))
+          done
+          echo "::error::failed to push registry.yaml after 5 attempts"
+          exit 1
