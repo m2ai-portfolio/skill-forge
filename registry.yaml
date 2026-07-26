@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-07-14"
-total_skills: 206
+generated_at: "2026-07-26"
+total_skills: 207
 by_status:
   active: 23
-  draft: 136
+  draft: 137
 
 skills:
   - name: acceptance-constitution
@@ -746,6 +746,12 @@ skills:
     version: "1.0.0"
     status: cold
     domain: governance
+    health_score: null
+
+  - name: local-ai-bootstrap
+    version: "1.0.0"
+    status: draft
+    domain: infrastructure
     health_score: null
 
   - name: loop-of-loops-mapper
