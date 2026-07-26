@@ -1,0 +1,36 @@
+name: local-ai-bootstrap
+version: "1.0.0"
+status: draft
+created: "2026-07-26"
+last_reviewed: "2026-07-26"
+sync_hash: null
+
+source:
+  type: youtube
+  url: "https://www.youtube.com/watch?v=84POiAUhtSI"
+  author: "Mark Kashef"
+  date: "2026-07-22"
+
+taxonomy:
+  domain: infrastructure
+  complexity: beginner-intermediate
+
+metrics:
+  invocations_30d: 0
+  last_invoked: null
+  manual_rating: null
+  health_score: null
+
+learning:
+  total_patches_applied: 0
+  total_patches_proposed: 0
+  last_patch_at: null
+  effectiveness_score: null
+
+lineage:
+  parent_version: null
+  derived_from: null
+  changelog:
+    - "2026-07-26: initial draft extracted from Mark Kashef YouTube video (forge-content-scan)"
+
+dependencies: []
