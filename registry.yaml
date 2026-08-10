@@ -3,11 +3,11 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-07-26"
-total_skills: 207
+generated_at: "2026-08-10"
+total_skills: 208
 by_status:
   active: 23
-  draft: 137
+  draft: 138
 
 skills:
   - name: acceptance-constitution
@@ -854,6 +854,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: observability
+    health_score: null
+
+  - name: native-video-intake
+    version: "1.0.0"
+    status: draft
+    domain: ai-native-capabilities
     health_score: null
 
   - name: nemoclaw-policy-gen
