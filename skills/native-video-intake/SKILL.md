@@ -1,11 +1,11 @@
 ---
 name: native-video-intake
-description: "Use a raw MP4, screen recording, or video URL as direct input to Claude Code or Codex — no plugins or extra tools required. The AI breaks the video into frames and audio, giving it full visual + transcript context. Use when you want to feed a Loom walkthrough, a site review recording, or a narrated demo directly to the AI as requirements. Triggers on: \"watch this video\", \"I have a Loom\", \"feed this recording\", \"use this MP4\", \"video input\", \"screen recording as requirements\", \"record my workflow\"."
+description: "Use a raw MP4, screen recording, or video URL as direct input to Claude Code or Codex, no plugins or extra tools required. The AI breaks the video into frames and audio, giving it full visual + transcript context. Use when you want to feed a Loom walkthrough, a site review recording, or a narrated demo directly to the AI as requirements. Triggers on: \"watch this video\", \"I have a Loom\", \"feed this recording\", \"use this MP4\", \"video input\", \"screen recording as requirements\", \"record my workflow\"."
 ---
 
 # Native Video Intake
 
-Both Claude Code and Codex can process raw MP4 files natively — no special skill, plugin, or
+Both Claude Code and Codex can process raw MP4 files natively: no special skill, plugin, or
 external API required. The screen-recording feature they both shipped quietly enabled general
 video understanding: the runtime breaks the file into micro-frames, pairs each with the audio
 track, and feeds both through the model's image and language processing pipeline.
@@ -47,7 +47,7 @@ Without this, some models default to extracting captions only.
 
 Template:
 ```
-Watch this video end to end — don't just pull the transcript. Look at what is on screen
+Watch this video end to end. Don't just pull the transcript. Look at what is on screen
 at each point. Then [your actual task].
 ```
 
@@ -92,7 +92,7 @@ Check the response for timestamp references or frame-specific observations. If i
 returns a text summary without visual detail, re-prompt:
 
 ```
-You appear to have only read the captions. Please review the video frames as well —
+You appear to have only read the captions. Please review the video frames as well:
 specifically, tell me what you observed at [timestamp] visually on screen.
 ```
 
