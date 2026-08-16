@@ -23,7 +23,7 @@ Build a skill that maps a task description to the correct one (or combination) o
 - **[c] Value:** 5/5 — bridges the gap between "I know dynamic workflows exist" and "I know which shape to use and how to prompt it." The existing `dynamic-workflow-orchestration` skill covers invocation mechanics but not pattern selection.
 - **[d] Why now or never:** The masterclass framing of exactly 6 named patterns is fresh and well-structured; capturing it now while the taxonomy is clear prevents the patterns from blurring together as models evolve. Pairs with the already-present `dynamic-workflow-orchestration` and `workflow-fit-scorer` skills.
 
-**Status:** Built — `skills/dynamic-workflow-pattern-selector/`
+**Routing:** BUILT — `skills/dynamic-workflow-pattern-selector/`
 
 ---
 
@@ -36,6 +36,8 @@ A static markdown file at `data/references/dynamic-workflow-prompt-library.md` c
 - **[c] Value:** 3/5 — extends the skill's utility but is not independently valuable without the selector
 - **[d] Why now or never:** The video provides ready-made prompt examples for each pattern; transcribing them as a reference library costs nothing now and saves re-derivation later.
 
+**Routing:** CARD — MAI-34. Its stated dependency is satisfied (`dynamic-workflow-pattern-selector` is built), so the "not independently valuable" objection no longer holds. The card corrects the target path: `data/references/` is gitignored, so it goes inside the skill dir instead.
+
 ---
 
 ### 3. Self-preference bias detection hook (PreToolUse on workflow prompts)
@@ -46,6 +48,8 @@ A Claude Code hook that detects when a workflow prompt asks one agent to both ge
 - **[b] Dependencies:** `~/.claude/hooks/` PreToolUse infrastructure; no new tools
 - **[c] Value:** 3/5 — prevents a subtle but real workflow quality failure. The generate-and-filter pattern is the most likely site for this mistake.
 - **[d] Why now or never:** Low adoption risk — needs validation that the hook's regex is precise enough before wiring it in. Defer to the 14-day window.
+
+**Routing:** NO-GO — a PreToolUse gate that regex-matches arbitrary prompt text for "same agent generates and judges" is high false-positive risk on a blocking hook, and the intake itself flags it as "tricky to catch all cases" and says defer. It is also a `~/.claude/hooks/` change, outside this repo. Reopen only with a validated pattern set and a warn-only first pass.
 
 ---
 
