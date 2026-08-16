@@ -136,6 +136,26 @@ class TestLegacySuffix:
         assert bare.exists(), "migrate must not touch unmarked files"
 
 
+class TestSupportingFilesAreNotIntakeItems:
+    """The live dir holds `.nate_compiled_header.md`, a template the intake
+    writer prepends. Treating it as an item made --check call it READY and
+    would have let --mark rename the template out from under the writer."""
+
+    @pytest.mark.parametrize("name", [".nate_compiled_header.md", "_template.md"])
+    def test_dot_and_underscore_files_are_skipped(self, tmp_path, name):
+        write(tmp_path, name)
+        assert marker.intake_files(tmp_path) == []
+
+    def test_a_directory_of_only_supporting_files_is_clean(self, tmp_path):
+        write(tmp_path, ".nate_compiled_header.md")
+        assert marker.check(tmp_path) == 0
+
+    def test_real_items_are_still_seen_alongside_them(self, tmp_path):
+        write(tmp_path, ".nate_compiled_header.md")
+        write(tmp_path, "src-2026-01-01.md", idea("One"))
+        assert [p.name for p in marker.intake_files(tmp_path)] == ["src-2026-01-01.md"]
+
+
 class TestCheck:
     def test_clean_directory_exits_zero(self, tmp_path):
         write(tmp_path, "a-2026-01-01.processed.md")

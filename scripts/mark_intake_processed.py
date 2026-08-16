@@ -128,7 +128,15 @@ def unrouted(path: Path) -> list[tuple[str, str]]:
 
 
 def intake_files(directory: Path) -> list[Path]:
-    return sorted(p for p in directory.glob("*.md") if p.is_file())
+    """Intake items only.
+
+    `.nate_compiled_header.md` is a template the intake writer prepends, not an
+    item to route; a dot- or underscore-prefixed name marks that class of
+    supporting file. Without this filter --check reported the header as READY
+    and --mark would have renamed the template out from under the writer.
+    """
+    return sorted(p for p in directory.glob("*.md")
+                  if p.is_file() and not p.name.startswith((".", "_")))
 
 
 def mark(path: Path, *, force: bool = False) -> Path:
