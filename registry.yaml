@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-08-15"
-total_skills: 254
+total_skills: 257
 by_status:
   active: 23
-  draft: 184
+  draft: 187
 
 skills:
   - name: acceptance-constitution
@@ -958,6 +958,12 @@ skills:
     domain: mcp
     health_score: null
 
+  - name: mcp-compatibility-scanner
+    version: "1.0.0"
+    status: draft
+    domain: mcp-tooling
+    health_score: null
+
   - name: mcp-portability-auditor
     version: "1.0.0"
     status: draft
@@ -1130,6 +1136,12 @@ skills:
     version: "1.0.0"
     status: draft
     domain: data-portability
+    health_score: null
+
+  - name: platform-shift-detector
+    version: "1.0.0"
+    status: draft
+    domain: market-intelligence
     health_score: null
 
   - name: poly-skill
@@ -1479,6 +1491,12 @@ skills:
     status: draft
     domain: content-creation
     health_score: 19.0
+
+  - name: visual-qa-loop
+    version: "1.0.0"
+    status: draft
+    domain: quality-assurance
+    health_score: null
 
   - name: weekly-signal-diff
     version: "1.0.0"
