@@ -8,6 +8,7 @@ total_skills: 257
 by_status:
   active: 23
   draft: 187
+  cold: 47
 
 skills:
   - name: acceptance-constitution

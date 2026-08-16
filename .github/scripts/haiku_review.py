@@ -118,6 +118,18 @@ def gather_content(files: list[str]) -> str:
     return "".join(chunks)
 
 
+def missing_sidecars(files: list[str]) -> list[str]:
+    """Skill dirs in this PR that add/edit a SKILL.md but carry no sidecar.
+
+    A skill without skill-registry.yaml is skipped by src/build_registry.py, so
+    it never reaches registry.yaml and is invisible to every registry consumer.
+    49 skills accumulated this way before anyone noticed (MAI-28), so this is a
+    deterministic hold like the secret scan: the model does not get a vote.
+    """
+    dirs = {Path(p).parent for p in files if Path(p).name == "SKILL.md"}
+    return sorted(str(d) for d in dirs if not (d / "skill-registry.yaml").is_file())
+
+
 def scan_secrets(content: str) -> list[str]:
     hits = []
     for pat in SECRET_PATTERNS:
@@ -148,6 +160,7 @@ def main() -> int:
 
     content = gather_content(files)
     regex_hits = scan_secrets(content)
+    sidecar_gaps = missing_sidecars(files)
 
     client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
     response = client.messages.create(
@@ -181,6 +194,16 @@ def main() -> int:
             "A human must verify before this can merge."
         )
 
+    # A skill with no sidecar never reaches registry.yaml. Deterministic hold.
+    if sidecar_gaps:
+        decision = "request_changes"
+        for skill_dir in sidecar_gaps:
+            issues.append(
+                f"`{skill_dir}` has a SKILL.md but no `skill-registry.yaml`. "
+                "Without a sidecar the skill is skipped by `src/build_registry.py` "
+                "and will not appear in `registry.yaml`."
+            )
+
     if decision == "approve":
         body = (
             "🤖 **Haiku review: APPROVE** — auto-merging.\n\n"
@@ -197,7 +220,10 @@ def main() -> int:
         )
 
     write_output(decision, body)
-    print(f"decision={decision}; files={len(files)}; regex_hits={len(regex_hits)}")
+    print(
+        f"decision={decision}; files={len(files)}; "
+        f"regex_hits={len(regex_hits)}; sidecar_gaps={len(sidecar_gaps)}"
+    )
     return 0
 
 
