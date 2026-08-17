@@ -1,8 +1,8 @@
 name: poly-skill
-version: "1.0.0"
+version: "1.1.0"
 status: draft
 created: "2026-05-22"
-last_reviewed: null
+last_reviewed: "2026-08-17"
 sync_hash: null
 
 source:
@@ -28,8 +28,11 @@ learning:
   effectiveness_score: null
 
 lineage:
-  parent_version: null
+  parent_version: "1.0.0"
   derived_from: null
-  changelog: []
+  changelog:
+    - version: "1.1.0"
+      date: "2026-08-17"
+      summary: "Add references/skill-formats.md, the verified per-provider skill schema, and point conversion phases at it instead of recalled formats (MAI-33). Corrects camelCase frontmatter, the Codex sidecar path and shape, and the shell-injection syntax; adds Gemini CLI and Cursor targets."
 
 dependencies: []
