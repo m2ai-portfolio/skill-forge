@@ -1,0 +1,41 @@
+# Backfilled 2026-08-15 (MAI-28): this sidecar was never written when the
+# skill was created, and the skill sat in a nested skills/draft/ container that
+# src/build_registry.py never traverses, so it was doubly invisible.
+# Provenance derived from the commit that added the skill: 773191b "Add 3 skills
+# from 2026-04-01 forge scan (1 YouTube, 2 Nate)"
+# taxonomy.complexity is a documented default (intermediate), not an assessment.
+name: mcp-compatibility-scanner
+version: "1.0.0"
+status: draft
+created: "2026-04-01"
+last_reviewed: null
+sync_hash: null
+
+source:
+  type: newsletter
+  url: null
+  author: "Nate Jones"
+  date: "2026-03-31"
+
+taxonomy:
+  domain: mcp-tooling
+  complexity: intermediate
+
+metrics:
+  invocations_30d: 0
+  last_invoked: null
+  manual_rating: null
+  health_score: null
+
+learning:
+  total_patches_applied: 0
+  total_patches_proposed: 0
+  last_patch_at: null
+  effectiveness_score: null
+
+lineage:
+  parent_version: null
+  derived_from: null
+  changelog: []
+
+dependencies: []

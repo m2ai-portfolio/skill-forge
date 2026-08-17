@@ -2,9 +2,11 @@
 """Build aggregated registry.yaml from individual skill-registry.yaml sidecar files.
 
 Usage:
-    python src/build_registry.py
+    python src/build_registry.py            # write registry.yaml, warn on gaps
+    python src/build_registry.py --strict   # ...and exit 1 if any gap remains
 """
 import datetime
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -16,6 +18,11 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 OUTPUT = REPO_ROOT / "registry.yaml"
+
+# Preferred display order for the by_status summary. Any status found in the
+# sidecars but absent here is still reported, appended in sorted order — a
+# hardcoded list silently dropped 47 `cold` skills from the summary until 2026-08-15.
+STATUS_ORDER = ("active", "draft", "under_review", "refined", "deprecated", "cold")
 
 
 def load_sidecar(path: Path) -> dict | None:
@@ -45,6 +52,20 @@ def load_sidecar(path: Path) -> dict | None:
         if in_taxonomy and not stripped.startswith(("domain:", "complexity:")) and ":" in stripped:
             in_taxonomy = False
     return data if data.get("name") else None
+
+
+def find_unregistered() -> list[str]:
+    """Skill dirs holding a SKILL.md but no sidecar, at any depth under skills/.
+
+    These are invisible to build(): no sidecar means no registry entry, and a
+    skill nested below the top level is never even visited. Surfacing them is
+    the whole point — 49 skills sat unregistered this way until 2026-08-15.
+    """
+    return sorted(
+        str(md.parent.relative_to(REPO_ROOT))
+        for md in SKILLS_DIR.rglob("SKILL.md")
+        if not (md.parent / "skill-registry.yaml").is_file()
+    )
 
 
 def build():
@@ -77,9 +98,10 @@ def build():
         f"total_skills: {len(entries)}",
         "by_status:",
     ]
-    for status in ("active", "draft", "under_review", "refined", "deprecated"):
-        if status_counts.get(status, 0) > 0:
-            lines.append(f"  {status}: {status_counts[status]}")
+    ordered = [s for s in STATUS_ORDER if status_counts.get(s)]
+    ordered += sorted(s for s in status_counts if s not in STATUS_ORDER)
+    for status in ordered:
+        lines.append(f"  {status}: {status_counts[status]}")
 
     lines.append("")
     lines.append("skills:")
@@ -95,6 +117,17 @@ def build():
     OUTPUT.write_text("\n".join(lines) + "\n")
     print(f"Wrote {OUTPUT} with {len(entries)} skills")
 
+    unregistered = find_unregistered()
+    for path in unregistered:
+        print(f"WARNING: {path} has a SKILL.md but no skill-registry.yaml, "
+              f"so it is missing from {OUTPUT.name}")
+    return unregistered
+
 
 if __name__ == "__main__":
-    build()
+    missing = build()
+    # --strict turns the warning into a failure. Off by default so a stray
+    # sidecar-less skill cannot block registry regeneration on main; the
+    # blocking gate lives at PR time in .github/scripts/haiku_review.py.
+    if "--strict" in sys.argv and missing:
+        sys.exit(1)
