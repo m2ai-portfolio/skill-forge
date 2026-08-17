@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-08-17"
-total_skills: 257
+total_skills: 258
 by_status:
   active: 23
-  draft: 187
+  draft: 188
   cold: 47
 
 skills:
@@ -915,6 +915,12 @@ skills:
     version: "1.0.0"
     status: cold
     domain: governance
+    health_score: null
+
+  - name: local-agentic-web-studio
+    version: "1.0.0"
+    status: draft
+    domain: local-ai
     health_score: null
 
   - name: local-ai-bootstrap
