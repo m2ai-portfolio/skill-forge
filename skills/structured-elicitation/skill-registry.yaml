@@ -1,0 +1,39 @@
+# Backfilled 2026-08-15 (MAI-28): this sidecar was never written when the
+# skill was created, so the skill was invisible to src/build_registry.py.
+# Provenance derived from the commit that added the skill: dc7df7b "forge: 3 skills from Nate newsletter 2026-04-15"
+# taxonomy.complexity is a documented default (intermediate), not an assessment.
+name: structured-elicitation
+version: "1.0.0"
+status: draft
+created: "2026-04-16"
+last_reviewed: null
+sync_hash: null
+
+source:
+  type: newsletter
+  url: null
+  author: "Nate Jones"
+  date: "2026-04-15"
+
+taxonomy:
+  domain: agent-authoring
+  complexity: intermediate
+
+metrics:
+  invocations_30d: 0
+  last_invoked: null
+  manual_rating: null
+  health_score: null
+
+learning:
+  total_patches_applied: 0
+  total_patches_proposed: 0
+  last_patch_at: null
+  effectiveness_score: null
+
+lineage:
+  parent_version: null
+  derived_from: null
+  changelog: []
+
+dependencies: []

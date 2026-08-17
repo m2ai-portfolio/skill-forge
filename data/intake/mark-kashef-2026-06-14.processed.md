@@ -23,6 +23,8 @@ Build a skill that walks Claude Code session JSONL files, strips bloat (tool res
 - **[c] Value:** 4/5 -- directly actionable for anyone who had any Fable history; the Hugging Face fallback makes it viable even for users who had minimal access. Addresses a real gap: model behavioral gaps are often elicitable, but nobody has a systematic way to identify which gaps those are.
 - **[d] Why now or never:** The Fable 5 outage created acute demand exactly when the technique was demonstrated. Capturing it now gives a durable reference that survives model churn -- the JSONL format and `message_model` tag are stable across Claude Code versions.
 
+**Routing:** BUILT — `skills/session-behavioral-playbook/`
+
 ---
 
 ### 2. Community corpus ingestion adapter
@@ -34,6 +36,8 @@ A lightweight adapter that downloads a Hugging Face Fable session dataset and no
 - **[c] Value:** 3/5 -- primarily a fallback path; most heavy users will have enough personal Fable history for the main path.
 - **[d] Why now or never:** The community datasets may disappear or become stale as Fable recedes -- worth capturing the reference now while the datasets are fresh and the community is actively uploading sessions.
 
+**Routing:** NO-GO — largely covered. `skills/session-behavioral-playbook/SKILL.md` already routes the Hugging Face fallback in four places (lines 10, 23, 33, 57), including the download-and-preprocess step. What is missing is only mechanization of a branch the skill already documents, on a path the intake itself calls "primarily a fallback" at 3/5. Reopen if someone actually hits the sparse-history path and finds the manual step too slow.
+
 ---
 
 ### 3. Playbook injection hook template
@@ -44,6 +48,8 @@ A CLAUDE.md pattern and `settings.json` `SessionStart` hook template that automa
 - **[b] Dependencies:** `~/.claude/settings.json` hook infrastructure (already live).
 - **[c] Value:** 3/5 -- quality-of-life improvement; the manual Option C from the main skill already works. The hook makes it persistent without user intervention.
 - **[d] Why now or never:** Most useful immediately after the playbook is generated; easy to defer until the playbook has been validated manually a few times first.
+
+**Routing:** NO-GO — nothing to inject. `~/.claude/playbooks/` does not exist and no playbook has been generated yet (verified 2026-08-15), so a SessionStart hook would add boot cost for an empty file. The intake itself says defer until a playbook is validated manually. Reopen when the first playbook exists.
 
 ---
 

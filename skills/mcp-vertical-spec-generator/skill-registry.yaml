@@ -1,0 +1,39 @@
+# Backfilled 2026-08-15 (MAI-28): this sidecar was never written when the
+# skill was created, so the skill was invisible to src/build_registry.py.
+# Provenance derived from the commit that added the skill: 73575c0 "feat(skills): add 5 Claude Cowork skills from 2026-06-07 intake (#69)"
+# taxonomy.complexity is a documented default (intermediate), not an assessment.
+name: mcp-vertical-spec-generator
+version: "1.0.0"
+status: draft
+created: "2026-06-07"
+last_reviewed: null
+sync_hash: null
+
+source:
+  type: internal
+  url: null
+  author: "Matthew Snow"
+  date: "2026-06-07"
+
+taxonomy:
+  domain: mcp-tooling
+  complexity: intermediate
+
+metrics:
+  invocations_30d: 0
+  last_invoked: null
+  manual_rating: null
+  health_score: null
+
+learning:
+  total_patches_applied: 0
+  total_patches_proposed: 0
+  last_patch_at: null
+  effectiveness_score: null
+
+lineage:
+  parent_version: null
+  derived_from: null
+  changelog: []
+
+dependencies: []
