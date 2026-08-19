@@ -4,10 +4,10 @@
 # Regenerate: python src/build_registry.py
 
 generated_at: "2026-08-18"
-total_skills: 258
+total_skills: 259
 by_status:
   active: 23
-  draft: 188
+  draft: 189
   cold: 47
 
 skills:
@@ -1036,6 +1036,12 @@ skills:
     status: draft
     domain: developer-tooling
     health_score: 0.0
+
+  - name: model-native-prompt-refiner
+    version: "1.0.0"
+    status: draft
+    domain: prompt-engineering
+    health_score: null
 
   - name: model-release-deep-dive
     version: "1.0.0"
