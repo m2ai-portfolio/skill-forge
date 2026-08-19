@@ -3,7 +3,7 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-08-17"
+generated_at: "2026-08-18"
 total_skills: 257
 by_status:
   active: 23
