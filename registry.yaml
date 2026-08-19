@@ -3,7 +3,7 @@
 # Consumers: Forge review pass, Sky-Lynx analysis, AutoResearch catalog awareness
 # Regenerate: python src/build_registry.py
 
-generated_at: "2026-08-17"
+generated_at: "2026-08-18"
 total_skills: 257
 by_status:
   active: 23
@@ -648,7 +648,7 @@ skills:
     health_score: null
 
   - name: dynamic-workflow-pattern-selector
-    version: "1.0"
+    version: "1.1"
     status: draft
     domain: unknown
     health_score: null
@@ -1146,7 +1146,7 @@ skills:
     health_score: null
 
   - name: poly-skill
-    version: "1.0.0"
+    version: "1.1.0"
     status: draft
     domain: skill-engineering
     health_score: null

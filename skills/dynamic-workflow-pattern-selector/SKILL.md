@@ -1,11 +1,13 @@
 ---
 name: dynamic-workflow-pattern-selector
-description: Given a task, select the right one of Claude Code's 6 dynamic workflow patterns (classify-and-act, fan-out-and-synthesize, adversarial-verification, generate-and-filter, tournament, loop-until-done) and produce a ready-to-run prompt. Trigger phrases: "which workflow pattern", "how should I structure this workflow", "what pattern for", "should I fan out or loop", "help me pick a workflow pattern", "stack workflow patterns".
+description: 'Given a task, select the right one of Claude Code''s 6 dynamic workflow patterns (classify-and-act, fan-out-and-synthesize, adversarial-verification, generate-and-filter, tournament, loop-until-done) and produce a ready-to-run prompt. Trigger phrases: "which workflow pattern", "how should I structure this workflow", "what pattern for", "should I fan out or loop", "help me pick a workflow pattern", "stack workflow patterns".'
 ---
 
 # Dynamic Workflow Pattern Selector
 
 A decision guide for Claude Code's 6 named dynamic workflow patterns from the Anthropic masterclass. Given a task description, maps it to the right pattern (or stack of patterns), explains why, and produces a ready-to-run prompt. Complements `dynamic-workflow-orchestration`, which covers invocation mechanics; this skill covers pattern selection and prompt construction.
+
+**Prompt library:** `reference/prompt-library.md` in this skill folder holds the long-form version of every template below, plus one template per common two-pattern stack, the keyword contract that routes a prompt into each shape, the guardrail sentence per pattern, and the anti-stacks. Select the pattern here, then copy the prompt from there rather than paraphrasing the short template. Record runs in its validation log.
 
 ## Trigger
 

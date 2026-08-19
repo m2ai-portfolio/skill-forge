@@ -1,26 +1,41 @@
 ---
 name: poly-skill
-description: Convert any Claude Code skill to work in OpenAI Codex (or vice versa) by applying a structural adapter that handles naming differences, sidecar YAML generation, trigger placement, tool-permission fields, and terminal-command syntax between the two platforms.
+description: Convert a skill between Claude Code, OpenAI Codex, Gemini CLI, and Cursor by applying a structural adapter that handles frontmatter field differences, sidecar generation, trigger placement, tool-permission fields, and shell-injection syntax. Reads the checked-in provider schema at references/skill-formats.md rather than recalling formats.
 ---
 
 # Poly-Skill
 
-Cross-platform skill adapter. Given a skill written for Claude Code or Codex, produces a version that works correctly on the other platform. Handles the structural mismatches that cause skills to silently misfire when ported.
+Cross-platform skill adapter. Given a skill written for one provider, produces a version that works correctly on another. Handles the structural mismatches that cause skills to silently misfire when ported.
 
 ## Trigger
 
 Use when the user says "poly skill", "convert this skill to codex", "port this skill to claude code", "make this skill work in both", "cross-platform skill", "skill adapter", or provides a SKILL.md and asks why it doesn't work in the other environment.
 
+## Schema source of truth
+
+**Read `references/skill-formats.md` before emitting any converted file.** It carries the verified
+per-provider schema: the shared Agent Skills core, each provider's frontmatter table, discovery
+paths, sidecar shape, and the conversion matrix of what survives, what translates, and what is
+lost. Never write a frontmatter field, a sidecar path, or a body syntax from memory. If the
+reference does not cover the target provider, say so and stop rather than guessing.
+
+The reference also records its own verification date and a re-verification procedure. If it is
+visibly stale relative to the user's installed CLI versions, flag that before converting.
+
 ## Background: Why Skills Misfire Across Platforms
 
-Claude Code and Codex share the same high-level concept (a markdown-defined reusable command) but differ in four structural areas:
+All four providers read the same artifact: a directory with a `SKILL.md` whose frontmatter carries
+`name` and `description`. That core is portable. Skills misfire when a provider-specific extension
+is carried across unchanged, or when a field the source relied on is silently dropped.
 
-| Area | Claude Code | Codex |
-|------|-------------|-------|
-| Metadata heading | YAML frontmatter `name` / `description` | Frontmatter + `## Metadata` section with `shortDescription` |
-| Trigger placement | Anywhere in body | Must be at the top -- Codex truncates long descriptions and may never reach triggers placed at the end |
-| Terminal commands | Backtick-bang syntax (`` `!command` ``) | Different invocation model -- no direct backtick-bang |
-| Tool permissions | `allowedTools` + `disableModelInvocation` in frontmatter | Sidecar YAML file with `tools`, `policies`, `icon`, `defaultPrompt` sections |
+The four failure areas, in full detail in `references/skill-formats.md` §5:
+
+| Area | Failure when ported |
+|------|--------------------|
+| Extra frontmatter | Claude Code honors 15+ extra fields; Codex and Gemini CLI read none of them, Cursor reads three. Everything else is silently ignored, or rejected outright on a claude.ai upload |
+| Trigger placement | Every provider truncates the listing text and `description` is the only shared trigger signal, so a trigger buried at the end of the body never fires |
+| Shell injection | Claude Code's `` !`command` `` body syntax exists nowhere else and must become prose or a `scripts/` call |
+| Tool permissions and invocation policy | `allowed-tools` has no equivalent on Codex or Gemini CLI; `disable-model-invocation` maps to `policy.allow_implicit_invocation: false` on Codex only |
 
 ## Phase 1: Read Source Skill
 
@@ -29,10 +44,12 @@ Ask the user for the path to the skill directory (or accept it as an argument). 
 - Any `.yaml` / `.yml` sidecar files
 - Any `scripts/` subdirectory contents
 
-Identify the source platform from structural fingerprints:
-- Has `allowedTools` in frontmatter? Claude Code.
-- Has a `## Metadata` section or a sidecar YAML with `tools:` / `policies:`? Codex.
-- Ambiguous? Ask the user.
+Identify the source platform from structural fingerprints (fields per `references/skill-formats.md`):
+- Frontmatter carries a Claude Code-only field (`allowed-tools`, `context`, `argument-hint`, `when_to_use`, `disallowed-tools`, `model`, `effort`, `agent`, `shell`), or the body uses `` !`command` `` injection? Claude Code.
+- Directory contains `agents/openai.yaml`? Codex.
+- Frontmatter is core-only plus `paths` or `disable-model-invocation` and nothing Claude Code-specific? Cursor.
+- Core fields only, no sidecar, no provider-specific field? Spec-clean, portable as-is.
+- Ambiguous? Ask the user. Do not guess from the install path alone, Cursor also loads `.claude/skills/`.
 
 ## Phase 2: Extract Shared Structure
 
@@ -50,62 +67,46 @@ requires_approval: true | false
 assets: [paths to scripts, reference files]
 ```
 
-Backtick-bang patterns in the body (`` `!command` ``) are extracted as `terminal_commands` items with their context.
+Injection patterns in the body (`` !`command` ``, bang before the backticks) are extracted as `terminal_commands` items with their context.
 
 ## Phase 3: Apply Target Platform Adapter
 
+Reduce to the shared Agent Skills core first (`name`, `description`, and only the optional spec
+fields the source actually used), then re-extend for the target. Take every field name, sidecar
+path, and syntax from `references/skill-formats.md` §1-§4. The rules below are the shape of the
+work, not the schema.
+
+### Every target
+
+- `name` must equal the output directory name, lowercase alphanumerics and single hyphens.
+- The primary trigger phrase goes at the very start of `description`, because every provider
+  truncates the listing text.
+- Anything the target cannot express is DROPPED, not renamed. Record each drop for Phase 5.
+
 ### Claude Code adapter
 
-Output directory: `<skill-name>/` with a single `SKILL.md`.
-
-Frontmatter fields to write:
-```yaml
----
-name: <skill_name>
-description: <description>
-allowedTools: [<tools>]
-disableModelInvocation: false
----
-```
-
-Body rules:
-- Trigger section immediately after the title
-- Terminal commands rendered as backtick-bang (`` `!command` ``)
-- No sidecar file needed
+Output: `<skill-name>/SKILL.md`, no sidecar. Extension fields available in
+`references/skill-formats.md` §1, kebab-case. Shell injection may be re-expressed as
+`` !`command` ``. If the skill is destined for a claude.ai upload or the Skills API rather than the
+CLI, restrict frontmatter to the six spec fields; anything else is a hard error there.
 
 ### Codex adapter
 
-Output directory: `<skill-name>/` with two files: `SKILL.md` + `<skill-name>.yaml` (sidecar).
+Output: `<skill-name>/SKILL.md` with core-only frontmatter, plus `agents/openai.yaml`. Sidecar
+field list and constraints are in `references/skill-formats.md` §2. `disable-model-invocation`
+becomes `policy.allow_implicit_invocation: false`. `allowed-tools` has no target and is dropped.
+Injection commands become prose or a `scripts/` entry point.
 
-`SKILL.md` frontmatter:
-```yaml
----
-name: <skill_name>
-description: <trigger_phrases[0]> -- <description>
----
-```
+### Gemini CLI adapter
 
-Put the primary trigger phrase at the very start of the `description` field so Codex sees it even if the body is truncated.
+Output: `<skill-name>/SKILL.md` with `name` and `description` only, no sidecar. Every other field
+is parsed and discarded. Invocation policy and tool grants cannot be expressed, so both are dropped.
 
-`## Metadata` section at the top of the body:
-```markdown
-## Metadata
-shortDescription: <short_description>
-```
+### Cursor adapter
 
-Sidecar `<skill-name>.yaml`:
-```yaml
-display:
-  icon: "terminal"
-  defaultPrompt: "<trigger_phrases[0]>"
-tools: [<allowed_tools>]
-policies:
-  requireApproval: <requires_approval>
-```
-
-Body rules:
-- Trigger phrases listed under `## Trigger` near the top (first section after Metadata)
-- Terminal commands converted to prose instructions -- Codex does not support backtick-bang
+Output: `<skill-name>/SKILL.md` carrying the core plus `paths`, `disable-model-invocation`, and
+`metadata` if the source used them. Cursor also reads `.claude/skills/` directly, so if the source
+is a Claude Code skill already installed there, say so instead of emitting a redundant copy.
 
 ## Phase 4: Write Output
 
@@ -115,13 +116,19 @@ If the user asked for both platforms in one run, write both adapters to `./outpu
 
 ## Phase 5: Validation Check
 
-After writing, self-verify:
-- Does the Codex SKILL.md description begin with a trigger phrase? (truncation safety)
-- Does the Claude Code version have `allowedTools` if any tools were used in the original? (permission safety)
-- Are any backtick-bang commands still present in the Codex output? (syntax safety -- they should have been prose-converted)
+After writing, self-verify against `references/skill-formats.md`:
+- Does `name` match the output directory name and the spec's naming rules? (discovery safety)
+- Does `description` begin with a trigger phrase and stay inside the target's cap? (truncation safety)
+- Does the output carry ONLY frontmatter fields the target honors, per §5's matrix? (silent-ignore safety)
+- Is the Codex sidecar at `agents/openai.yaml`, using `interface:` / `dependencies:` / `policy:`? (sidecar safety)
+- Are any `` !`command` `` injections still present in a non-Claude-Code output? (syntax safety, they should have been prose-converted)
 
-Report a one-line pass/fail per check.
+Report a one-line pass/fail per check, then list every field dropped in conversion and the behavior
+change each drop causes. A silent drop is the failure mode this skill exists to prevent.
 
 ## Source Attribution
 
 Technique derived from Mark Kashef YouTube video "How to INSTANTLY Run ANY Skill in Claude + Codex" (2026-05-21): https://www.youtube.com/watch?v=tjjX43FoAUg
+
+Provider schemas in `references/skill-formats.md` are verified against vendor documentation and
+installed CLI versions, not derived from the video. See that file's Evidence lines.
