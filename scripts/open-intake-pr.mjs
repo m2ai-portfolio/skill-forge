@@ -13,7 +13,7 @@
 // Usage:
 //   node scripts/open-intake-pr.mjs --skill <name> [--title "..."] [--body-file path] [--validate-only]
 //   node scripts/open-intake-pr.mjs --tool-issue --name <kebab> --source-url <url> --summary-file <path>
-//                                   [--title "..."] [--hooks "a; b; c"] [--project-id <uuid>] [--dry-run]
+//                                   [--title "..."] [--hooks "a; b; c"] [--project <lane>] [--dry-run]
 //   node scripts/open-intake-pr.mjs --graduation-check
 //
 // Allowed staged paths: skills/<name>/** (new files only), registry.yaml,
@@ -30,6 +30,14 @@
 // records `**Classification:** tool` + `**Routing:** CARD — MAI-nnn` per idea, enforced by
 // scripts/mark_intake_processed.py, so every classification is grep-able after the fact.
 //
+// The sidecar is parsed as real YAML with duplicate-key rejection (scripts/strict_yaml.py), so
+// the gate judges the value the parser resolves, not the first line a regex happens to match.
+//
+// `--tool-issue` does NOT post to Paperclip itself. It renders a goal-maker-shaped card and hands
+// it to the workspace's ONE sanctioned intake funnel, ~/.claude/crons/goal-to-issue.mjs (owner/
+// sink/kill guards, evidence gate, dedup, idempotency, read-back all live there, once). Override
+// the funnel path with FORGE_GOAL_TO_ISSUE for fixture tests.
+//
 // HIL graduation: PRs open as DRAFT until data/forge-cycle-ledger.json cleanCycles >= 7.
 // POST-GRADUATION FLIP: change `draft: !graduated` below to `draft: false` semantics is
 // already automatic once cleanCycles >= 7; the remaining one-line decision is enabling
@@ -42,10 +50,10 @@
 // or written to disk/git config.
 
 import { spawnSync } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, unlinkSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { homedir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 
 const args = process.argv.slice(2);
 const opt = (f) => (args.includes(f) ? args[args.indexOf(f) + 1] : null);
@@ -79,10 +87,10 @@ if (args.includes('--graduation-check')) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// --tool-issue: the tool-classified exit. No SKILL.md, no forge/<name> branch, no PR. Files ONE
-// Paperclip evaluation issue (unassigned, per capture convention) and prints its identifier so
-// the intake file can record `**Routing:** CARD — MAI-nnn`. One side effect per intent: an
-// existing open issue with the same title is referenced, never duplicated.
+// --tool-issue: the tool-classified exit. No SKILL.md, no forge/<name> branch, no PR. Renders ONE
+// goal-maker card and routes it through goal-to-issue.mjs (the sanctioned funnel), then prints
+// the identifier it created (`created MAI-nnn`) or referenced (`existing MAI-nnn`, from the
+// funnel's dedup refusal) so the intake file can record `**Routing:** CARD — MAI-nnn`.
 // ---------------------------------------------------------------------------------------------
 if (args.includes('--tool-issue')) {
   const name = opt('--name');
@@ -94,75 +102,75 @@ if (args.includes('--tool-issue')) {
   const summary = readFileSync(summaryFile, 'utf8').trim();
   if (summary.length < 40) die(2, 'summary must be a real paragraph (>= 40 chars)');
   const hooks = (opt('--hooks') || '').split(';').map((h) => h.trim()).filter(Boolean);
-
-  const env = process.env;
-  const API = env.PAPERCLIP_API_URL || 'http://127.0.0.1:3151';
-  const TOKEN = env.PAPERCLIP_BOARD_TOKEN;
-  const COMPANY = env.PAPERCLIP_COMPANY_ID || '3e5c2e63-53bf-4ace-9456-3306e5e67091';
-  // Default: the `build` project, where evaluation work is routed by the daily routing pass.
-  const PROJECT = opt('--project-id') || env.FORGE_TOOL_ISSUE_PROJECT_ID || '14e1a6ae-36df-4881-a14e-8a643c69c741';
-  if (!TOKEN) die(1, 'PAPERCLIP_BOARD_TOKEN not in env (set -a; source ~/.env.shared; set +a)');
-
+  // Default lane: `build`, where evaluation work is routed by the daily routing pass.
+  const project = opt('--project') || process.env.FORGE_TOOL_ISSUE_PROJECT || 'build';
   const title = (opt('--title') || `Evaluate tool: ${name}`).slice(0, 200);
-  const description = [
+
+  // goal-maker card shape: front-matter with REAL owner/sink/kill (goal-to-issue refuses
+  // placeholders) plus a testable done-when (its evidence gate refuses boilerplate).
+  const card = [
+    '---',
+    `title: ${title}`,
+    `owner: Matthew (evaluation decision)`,
+    `sink: comment on the issue with adopt / trial / no-go and the reason`,
+    `kill: one evaluation pass; close with the decision recorded`,
+    `lane: ${project}`,
+    `shape: one-shot`,
     `classification: tool`,
     `source: forge intake (tool-vs-technique gate, scripts/open-intake-pr.mjs --tool-issue)`,
     `source_url: ${sourceUrl}`,
     `candidate: ${name}`,
-    ``,
-    `owner: Matthew (evaluation decision)`,
-    `sink: comment on this issue with adopt / trial / no-go and the reason`,
-    `kill: one evaluation pass; close with the decision recorded`,
-    ``,
-    `## Summary`,
+    '---',
+    '',
+    '## Summary',
     summary,
-    ``,
-    `## Relevance hooks`,
+    '',
+    '## Relevance hooks',
     ...(hooks.length ? hooks.map((h) => `- ${h}`) : ['- (none recorded by the scan; add before evaluating)']),
-    ``,
-    `## Why this is an issue and not a skill`,
-    `The forge intake classified this candidate as a TOOL (a thing to install or call), not a TECHNIQUE`,
-    `(a procedure to distill into a SKILL.md). Tools do not become skills (tool-skill-subagent triage).`,
-    `This is the Pattern-4 discovery exit: the intake file records \`**Routing:** CARD — <this issue>\`.`,
+    '',
+    '## Why this is an issue and not a skill',
+    'The forge intake classified this candidate as a TOOL (a thing to install or call), not a TECHNIQUE',
+    '(a procedure to distill into a SKILL.md). Tools do not become skills (tool-skill-subagent triage).',
+    'This is the Pattern-4 discovery exit: the intake file records `**Routing:** CARD — <this issue>`.',
+    '',
+    '## Done when',
+    `A comment on this issue records adopt, trial, or no-go for ${name} with a one-line reason, and the issue is closed.`,
+    '',
   ].join('\n');
 
-  const pc = async (path, opts = {}) => {
-    const r = await fetch(`${API}${path}`, {
-      ...opts,
-      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json', ...opts.headers },
-    });
-    const body = await r.json().catch(() => ({}));
-    return { ok: r.ok, status: r.status, body };
-  };
-  const norm = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-
+  // Dry-run renders the card locally: no token, no funnel call, no network.
   if (args.includes('--dry-run')) {
-    console.log(`DRY-RUN --tool-issue\ntitle: ${title}\nproject: ${PROJECT}\n---\n${description}`);
+    console.log(`DRY-RUN --tool-issue (nothing created; this card would go to goal-to-issue.mjs)\n${card}`);
     process.exit(0);
   }
 
-  // Duplicate guard: same normalized title, not closed = reference it.
-  const existing = await pc(`/api/companies/${COMPANY}/issues`);
-  if (!existing.ok) die(1, `could not list issues for the duplicate guard: ${existing.status}`);
-  const list = Array.isArray(existing.body) ? existing.body : (existing.body.issues || existing.body.items || []);
-  const dupe = list.find((i) => norm(i.title || '') === norm(title) && !['done', 'cancelled', 'canceled'].includes(i.status));
-  if (dupe) {
-    console.log(`existing ${dupe.identifier} ${API.replace('127.0.0.1', '10.0.0.46')}/issues/${dupe.id}`);
-    process.exit(0);
+  const funnel = process.env.FORGE_GOAL_TO_ISSUE || resolve(homedir(), '.claude/crons/goal-to-issue.mjs');
+  if (!existsSync(funnel)) die(1, `sanctioned intake funnel not found at ${funnel} (set FORGE_GOAL_TO_ISSUE to override)`);
+  const scratch = process.env.PAPERCLIP_RUN_SCRATCH_DIR || process.env.PAPERCLIP_SCRATCH_DIR || tmpdir();
+  const cardPath = resolve(scratch, `forge-tool-issue-${name}-${process.pid}.md`);
+  writeFileSync(cardPath, card);
+  let run;
+  try {
+    // No --force: the funnel's dedup (Jaccard >= 0.75 on open titles) is the dedup. An exact
+    // title match is reported as `existing`; a near-match is surfaced for a human to decide.
+    run = spawnSync('node', [funnel, '--file', cardPath, '--project', project], { encoding: 'utf8', env: process.env });
+  } finally {
+    try { unlinkSync(cardPath); } catch { /* scratch dir may already be gone */ }
   }
-
-  const created = await pc(`/api/companies/${COMPANY}/issues`, {
-    method: 'POST',
-    body: JSON.stringify({
-      title, description, projectId: PROJECT, status: 'todo', priority: 'medium',
-      idempotencyKey: `forge-tool-issue:${name}`,
-    }),
-  });
-  if (!created.ok) die(1, `issue creation failed ${created.status}: ${JSON.stringify(created.body).slice(0, 500)}`);
-  // Read-back: a write that cannot be read back is treated as lost (MAI-144 convention).
-  const back = await pc(`/api/issues/${created.body.id}`);
-  if (!back.ok || !back.body.identifier) die(1, `READ-BACK FAILED for ${created.body.id}; treat this capture as LOST`);
-  console.log(`created ${back.body.identifier} ${API.replace('127.0.0.1', '10.0.0.46')}/issues/${back.body.id}`);
+  if (run.status === 3) {
+    // Exact-title open duplicate (goal-to-issue: "dedup refusal: near-duplicate of MAI-nnn ...").
+    const m = (run.stderr || '').match(/near-duplicate of ([A-Z]+-\d+) "([^"]*)"/);
+    if (m && m[2].trim().toLowerCase() === title.trim().toLowerCase()) {
+      console.log(`existing ${m[1]}`);
+      process.exit(0);
+    }
+    die(3, `goal-to-issue refused as a near-duplicate (re-run with a more specific --title):\n${(run.stderr || '').trim()}`);
+  }
+  if (run.status !== 0) die(run.status || 1, `goal-to-issue.mjs failed (exit ${run.status}):\n${(run.stderr || '').trim()}`);
+  const created = (run.stdout || '').match(/^created ([A-Z]+-\d+)/m);
+  if (!created) die(1, `goal-to-issue.mjs exited 0 but printed no "created <id>" line (treat this capture as LOST):\n${run.stdout}`);
+  const link = ((run.stdout || '').match(/https?:\/\/\S+/) || [''])[0];
+  console.log(`created ${created[1]} ${link}`.trim());
   process.exit(0);
 }
 
@@ -190,19 +198,25 @@ for (const { status, path } of entries) {
   bad.push(path);
 }
 if (skillDirs.size > 1) die(2, `more than one skills/<dir> staged: ${[...skillDirs].join(', ')}`);
-if (skillDirs.size === 1 && !skillDirs.has(skill)) die(2, `staged skill dir "${[...skillDirs][0]}" does not match --skill ${skill}`);
+if (skillDirs.size === 0) die(2, `nothing staged under skills/${skill}/; --skill is the skill-creation path and requires the new skill dir (with skill-registry.yaml) to be staged`);
+if (!skillDirs.has(skill)) die(2, `staged skill dir "${[...skillDirs][0]}" does not match --skill ${skill}`);
 if (bad.length) die(2, `staged paths outside the intake allowlist:\n  ${bad.join('\n  ')}`);
 
-// 1b. Classification gate: the staged sidecar must say `classification: technique`.
-if (skillDirs.size === 1) {
-  const sidecarPath = `skills/${skill}/skill-registry.yaml`;
-  if (!entries.some((e) => e.path === sidecarPath)) die(2, `${sidecarPath} must be staged (carries the classification field)`);
-  const sidecar = git('show', `:${sidecarPath}`);
-  const m = sidecar.match(/^classification:\s*["']?([a-z]+)["']?\s*$/m);
-  if (!m) die(2, `${sidecarPath} has no classification field; add \`classification: technique\` (only techniques become skills; tools exit via --tool-issue)`);
-  if (!CLASSIFICATIONS.includes(m[1])) die(2, `${sidecarPath}: classification "${m[1]}" is not one of ${CLASSIFICATIONS.join(' | ')}`);
-  if (m[1] !== 'technique') die(2, `${sidecarPath}: classification "${m[1]}" does not become a skill. Unstage skills/${skill}/ and run:\n  node scripts/open-intake-pr.mjs --tool-issue --name ${skill} --source-url <url> --summary-file <path> [--hooks "a; b"]`);
-}
+// 1b. Classification gate: the staged sidecar, parsed as YAML with duplicate keys REJECTED, must
+// resolve top-level `classification` to `technique`. (A regex on the text was bypassable: a first
+// `classification: technique` line masked a later `classification: tool` that the YAML parser,
+// and therefore the registry, would actually use.)
+const sidecarPath = `skills/${skill}/skill-registry.yaml`;
+if (!entries.some((e) => e.path === sidecarPath)) die(2, `${sidecarPath} must be staged (carries the classification field)`);
+const sidecarText = git('show', `:${sidecarPath}`);
+const parsed = spawnSync('python3', [resolve(dirname(fileURLToPath(import.meta.url)), 'strict_yaml.py')], { input: sidecarText, encoding: 'utf8' });
+if (parsed.status !== 0) die(2, `${sidecarPath} is not valid strict YAML: ${(parsed.stderr || '').trim()}`);
+const sidecar = JSON.parse(parsed.stdout || 'null');
+if (!sidecar || typeof sidecar !== 'object' || Array.isArray(sidecar)) die(2, `${sidecarPath} must be a YAML mapping`);
+const cls = sidecar.classification;
+if (cls === undefined || cls === null || cls === '') die(2, `${sidecarPath} has no classification field; add \`classification: technique\` (only techniques become skills; tools exit via --tool-issue)`);
+if (typeof cls !== 'string' || !CLASSIFICATIONS.includes(cls)) die(2, `${sidecarPath}: classification "${cls}" is not one of ${CLASSIFICATIONS.join(' | ')}`);
+if (cls !== 'technique') die(2, `${sidecarPath}: classification "${cls}" does not become a skill. Unstage skills/${skill}/ and run:\n  node scripts/open-intake-pr.mjs --tool-issue --name ${skill} --source-url <url> --summary-file <path> [--hooks "a; b"]`);
 if (args.includes('--validate-only')) { console.log(`validate-only: staged set for ${skill} passes the allowlist and classification gate`); process.exit(0); }
 
 // 2. Mint a repo-scoped App token (stdout only, never logged).
